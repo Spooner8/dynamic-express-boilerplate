@@ -27,6 +27,21 @@ model User {
   email     String  @unique @map("username")
   password  String
   role      Role    @default(USER)
-
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  lastLogin DateTime? @db.Timestamptz(6)
+  isActive  Boolean @default(true)
+  
+  @@index([email])
   @@map("users")
+}
+
+model RefreshToken {
+  id        String  @id @default(ulid())
+  userId    String  
+  token     String
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt DateTime @db.Timestamptz(6)
+
+  @@map("refresh_tokens")
 }

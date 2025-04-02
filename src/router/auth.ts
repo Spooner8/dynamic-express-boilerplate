@@ -42,4 +42,17 @@ router.get('/logout', async (req: Request, res: Response) => {
     }
 });
 
+router.post('/refresh-token', async (req: Request, res: Response) => {
+    try {
+        await authService.refreshTokens(req, res);
+    } catch (error: unknown) {
+        logger.error(error);
+        if (error instanceof Error) {
+            res.status(400).json({ message: error.message });
+        } else {
+            res.status(400).json({ message: 'An unknown error occurred' });
+        }
+    }
+});
+
 export default router;

@@ -1,27 +1,33 @@
 import passport from '../passport.ts';
-import { generateToken, expireToken } from '../../utils/token.ts';
+import { tokenService } from '../../utils/token.ts';
 import type { Request, Response } from 'express';
 import type { User } from '@prisma/client';
 import { logger } from '../log/logger.ts';
+import { userService } from '../crud/user.ts';
+import db from '../database.ts';
+import type { JwtPayload } from 'jsonwebtoken';
 
 const login = (req: Request, res: Response) => {
     try {
-        passport.authenticate('local', { session: false, failureRedirect: '/login' }, (error: unknown, user: User) => {
+        passport.authenticate('local', { session: false, failureRedirect: '/login' }, async (error: unknown, user: User) => {
             if (error || !user) {
                 logger.error('Login failed', error);
-                res.status(401).json({ message: 'Invalid credentials' });
+                return res.status(401).json({ message: 'Invalid credentials' });
             }
-            const token = generateToken(user.id, user.email);
-            res.cookie('jwt', token, { httpOnly: true });
-            res.status(200).send({ message: 'User logged in' });
+            const { accessToken, refreshToken } = await generateTokens(user);
+            res.cookie('jwt', accessToken, { httpOnly: true });
+            res.cookie('refreshToken', refreshToken, { httpOnly: true });
+            await tokenService.saveRefreshToken(user.id, refreshToken);
+            await userService.updateUser(user.id, { ...user, lastLogin: new Date() });
+            return res.status(200).send({ message: 'User logged in' });
         })(req);
     }
     catch (error) {
         logger.error(error);
         if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
+            return res.status(400).json({ message: error.message });
         } else {
-            res.status(400).json({ message: 'An unknown error occurred' });
+            return res.status(400).json({ message: 'An unknown error occurred' });
         }
     }
 };
@@ -32,9 +38,10 @@ const logout = async (req: Request, res: Response) => {
     if (!user) {
         return res.status(401).json({ message: 'User not found' });
     }
-    expireToken(req, res);
-    res.status(200).json({ message: 'User logged out' });
+    tokenService.expireToken(req, res);
+    tokenService.expireRefreshToken(req, res);
     logger.info({ userId: user.id, username: user.email }, 'User logged out successfully');
+    return res.status(200).json({ message: 'User logged out' });
 };
 
 async function getCurrentUser(req: Request) {
@@ -54,8 +61,50 @@ async function getCurrentUser(req: Request) {
     }
 }
 
+async function generateTokens(user: User) {
+    const accessToken = tokenService.generateAccessToken(user.id, user.email, user.role);
+    const refreshToken = tokenService.generateRefreshToken(user.id);
+    return { accessToken, refreshToken };
+}
+
+async function refreshTokens(req: Request, res: Response) {
+    const { refreshToken } = req.cookies;
+    if (!refreshToken) {
+        return res.status(401).json({ message: 'Refresh token not found' });
+    }
+
+    const payload = tokenService.verifyRefreshToken(refreshToken) as JwtPayload;
+    if (!payload.id) {
+        return res.status(400).json({ message: 'Invalid token payload' });
+    }
+    
+    const storedToken = await db.refreshToken.findFirst({
+        where: {
+            token: refreshToken,
+        }
+    });
+    if (!storedToken) {
+        return res.status(401).json({ message: 'Refresh token not found' });
+    }
+    const user = await userService.getUserById(payload.id);
+
+    if (!user) {
+        res.status(401).json({ message: 'User not found' });
+    } else {
+        const newAccessToken = tokenService.generateAccessToken(user.id, user.email, user.role);
+        const newRefreshToken = tokenService.generateRefreshToken(user.id);
+
+        res.cookie('jwt', newAccessToken, { httpOnly: true });
+        res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+        await tokenService.saveRefreshToken(user.id, newRefreshToken);
+    }
+    await tokenService.deleteRefreshToken(refreshToken);
+    return res.status(200).json({ message: 'Tokens refreshed successfully' });
+}
+
 export const authService = {
     login,
     logout,
     getCurrentUser,
+    refreshTokens,
 };
