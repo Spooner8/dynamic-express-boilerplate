@@ -16,9 +16,9 @@ import { authService } from '../services/auth/auth.ts';
 
 const router = Router();
 
-router.post('/login', (req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
     try {
-        authService.login(req, res);
+        await authService.login(req, res);
     } catch (error: unknown) {
         logger.error(error);
         if (error instanceof Error) {

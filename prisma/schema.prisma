@@ -40,6 +40,8 @@ model RefreshToken {
   id        String  @id @default(ulid())
   userId    String  
   token     String
+  userAgent String
+  ipAddress String
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   expiresAt DateTime @db.Timestamptz(6)
 
