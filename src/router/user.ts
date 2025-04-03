@@ -15,6 +15,8 @@ import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { userService } from '../services/crud/user.ts';
 import { logger } from '../services/log/logger.ts';
+import { hasRole } from '../middleware/hasRole.ts';
+import { Role, type User } from '@prisma/client';
 
 const router = Router();
 
@@ -58,7 +60,7 @@ router.get('/', async (_req: Request, res: Response) => {
     }
 });
 
-router.get('/api/user/:id', async (req: Request, res: Response) => {
+router.get('/:id', hasRole([Role.ADMIN]), async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const user = id && (await userService.getUserById(id));
@@ -77,10 +79,11 @@ router.get('/api/user/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.put('/api/user/:id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
-        const response = req.body && (await userService.updateUser(id, req.body));
+        const data: User = req.body;
+        const response = data && (await userService.updateUser(id, data));
         if (!response) {
             res.status(404).send({ message: 'User not found' });
         } else {
@@ -96,7 +99,7 @@ router.put('/api/user/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/api/user/:id', async (req: Request, res: Response) => {
+router.delete('/:id', hasRole([Role.ADMIN]), async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const response = id && (await userService.deleteUser(id));

@@ -66,7 +66,7 @@ async function getCurrentUser(req: Request) {
 }
 
 async function generateTokens(user: User) {
-    const accessToken = tokenService.generateAccessToken(user.id, user.email, user.role);
+    const accessToken = tokenService.generateAccessToken(user.id, user.email);
     const refreshToken = tokenService.generateRefreshToken(user.id);
     return { accessToken, refreshToken };
 }
@@ -96,11 +96,11 @@ async function refreshTokens(req: Request, res: Response) {
     if (!user) {
         return res.status(401).json({ message: 'User not found' });
     } else {
-        const newAccessToken = tokenService.generateAccessToken(user.id, user.email, user.role);
+        const newAccessToken = tokenService.generateAccessToken(user.id, user.email);
         const newRefreshToken = tokenService.generateRefreshToken(user.id);
 
-        res.cookie('jwt', newAccessToken, { httpOnly: true });
-        res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+        tokenService.setTokenCookie('jwt', newAccessToken, res);
+        tokenService.setTokenCookie('refreshToken', newRefreshToken, res);
         await tokenService.saveRefreshToken(user.id, newRefreshToken, req);
     }
     await tokenService.deleteRefreshToken(refreshToken);

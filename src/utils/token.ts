@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import type { Request, Response } from 'express';
 import { authService } from '../services/auth/auth.ts';
-import type { Role } from '@prisma/client';
 import db from '../services/database.ts';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
@@ -9,8 +8,8 @@ const JWT_EXPIRATION = parseInt(process.env.JWT_EXPIRATION || '3600', 10);
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || 'thisisreallysecret';
 const REFRESH_TOKEN_EXPIRATION = parseInt(process.env.REFRESH_TOKEN_EXPIRATION || '604800', 10); // 7 days
 
-const generateAccessToken = (userId: string, username: string, role: Role) => {
-  const token = jwt.sign({ id: userId, username, role }, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
+const generateAccessToken = (userId: string, username: string) => {
+  const token = jwt.sign({ id: userId, username }, JWT_SECRET, { expiresIn: JWT_EXPIRATION });
   return token;
 };
 
