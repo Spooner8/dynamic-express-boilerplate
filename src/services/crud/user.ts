@@ -72,7 +72,12 @@ async function getUserByUsername(username: string) {
  * @param {User} data - The updated user data.
 */
 async function updateUser(id: string, data: User) {
-    data.password = await bcrypt.hash(data.password, 10);
+    if (data.password) {
+        const user = await db.user.findUnique({ where: { id } });
+        if (user && user.password !== data.password) {
+            data.password = await bcrypt.hash(data.password, 10);
+        }
+    }
     
     return await db.user.update({
         where: { id }, data
