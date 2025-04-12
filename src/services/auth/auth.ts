@@ -9,7 +9,7 @@ import type { JwtPayload } from 'jsonwebtoken';
 
 const login = async (req: Request, res: Response) => {
     try {
-        passport.authenticate('local', { session: false, failureRedirect: '/login' }, async (error: unknown, user: User) => {
+        passport.authenticate('local', { session: false, failureRedirect: '/api/auth/login' }, async (error: unknown, user: User) => {
             if (error || !user) {
                 logger.error({error}, 'Login failed');
                 return res.status(401).json({ message: 'Invalid credentials' });

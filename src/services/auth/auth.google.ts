@@ -20,7 +20,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
 };
 
 const callback = (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('google', { failureRedirect: '/login' }, async (err: unknown, user: User) => {
+    passport.authenticate('google', { failureRedirect: '/api/auth/login' }, async (err: unknown, user: User) => {
         if (err) {
             logger.error(err);
             return res.status(400).json({ message: 'Authentication failed' });

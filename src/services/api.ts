@@ -31,6 +31,8 @@ export const initializeAPI = (app: Express) => {
         credentials: true,
     };
 
+    app.set('trust proxy', 1);
+
     app.use(prometheus);
     app.use(bodyParser.json());
     app.use(cookieParser());
