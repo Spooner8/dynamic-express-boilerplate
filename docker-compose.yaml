@@ -29,6 +29,8 @@ services:
     ports:
       - '3100:3000'
     restart: always
+    volumes:
+      - what-to-cook-grafana:/var/lib/grafana
     networks:
       - what-to-cook
   db:
@@ -62,7 +64,6 @@ services:
     networks:
       - what-to-cook
     restart: always
-    # command: sh -c "npx prisma generate && npm run prod"
 
   api-2:
     build:
@@ -78,10 +79,10 @@ services:
     networks:
       - what-to-cook
     restart: always
-    # command: sh -c "npx prisma generate && npm run prod"
 
 volumes:
   what-to-cook-db:
+  what-to-cook-grafana:
 
 networks:
   what-to-cook:
