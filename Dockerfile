@@ -6,9 +6,6 @@ COPY package*.json ./
 
 RUN npm install
 
-# Install TypeScript globally
-# RUN npm install -g typescript
-
 COPY . .
 
 RUN npx prisma generate
