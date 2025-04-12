@@ -2,6 +2,6 @@ global:
     scrape_interval: 15s
 
 scrape_configs:
-    - job_name: 'what-to-cook'
+    - job_name: 'API'
       static_configs:
-          - targets: ['localhost:3000']
+          - targets: ['api-1:3000', 'api-2:3000']
