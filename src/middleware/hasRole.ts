@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { Role } from '@prisma/client';
-import { authService } from '../services/auth/auth.ts';
+import { Role } from '../../generated/prisma_client';
+import { authService } from '../services/auth/auth';
 
 export const hasRole = (roles: Role[]) => {
     return async (req: Request, res: Response, next: NextFunction) => {

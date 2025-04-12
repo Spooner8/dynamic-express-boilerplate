@@ -1,5 +1,18 @@
 import { PrismaClient } from "@prisma/client";
+import { logger } from './log/logger';
 
 const db = new PrismaClient();
 
-export default db;
+async function verifyDatabaseConnection() {
+    try {
+        await db.$connect();
+        logger.info("Database connection established successfully.");
+    } catch (error) {
+        logger.error("Failed to connect to the database:", error);
+        process.exit(1);
+    }
+}
+
+verifyDatabaseConnection();
+
+export default db

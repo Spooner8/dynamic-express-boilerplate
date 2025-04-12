@@ -5,8 +5,8 @@
  */
 
 import express from 'express';
-import { initializeAPI } from './services/api.ts';
-import { logger } from './services/log/logger.ts';
+import { initializeAPI } from './services/api';
+import { logger } from './services/log/logger';
 
 const SERVER_ROLE = process.env.SERVER_ROLE || 'all';
 const allowedRoles = ['all', 'api', 'worker'];

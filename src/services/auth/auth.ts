@@ -1,10 +1,10 @@
-import passport from '../passport.ts';
-import { tokenService } from '../../utils/token.ts';
+import passport from '../passport';
+import { tokenService } from '../../utils/token';
 import type { Request, Response } from 'express';
-import type { User } from '@prisma/client';
-import { logger } from '../log/logger.ts';
-import { userService } from '../crud/user.ts';
-import db from '../database.ts';
+import type { User } from '../../../generated/prisma_client';
+import { logger } from '../log/logger';
+import { userService } from '../crud/user';
+import db from '../database';
 import type { JwtPayload } from 'jsonwebtoken';
 
 const login = async (req: Request, res: Response) => {
@@ -112,4 +112,5 @@ export const authService = {
     logout,
     getCurrentUser,
     refreshTokens,
+    generateTokens,
 };

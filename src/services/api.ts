@@ -3,17 +3,19 @@ import bodyParser from 'body-parser';
 import 'dotenv/config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import { limiter } from '../middleware/rate-limiter.ts';
-import { httpLogger, logger } from './log/logger.ts';
-import { prometheus } from '../middleware/prometheus.ts';
-import passport from './passport.ts';
+import { limiter } from '../middleware/rate-limiter';
+import { httpLogger, logger } from './log/logger';
+import { prometheus } from '../middleware/prometheus';
+import passport from './passport';
 
 // Routers
-import authRouter from '../router/auth.ts';
-import userRouter from '../router/user.ts';;
+import authRouter from '../router/auth';
+import authGoogleRouter from '../router/auth.google';
+import userRouter from '../router/user';
 
 const PORT = process.env.API_PORT || 3000;
 const LIMITER = (process.env.RATE_LIMITER || 'true') === 'true';
+const USE_GOOGLE_AUTH = (process.env.USE_GOOGLE_AUTH || 'false') === 'true';
 
 /**
  * @description
@@ -22,7 +24,7 @@ const LIMITER = (process.env.RATE_LIMITER || 'true') === 'true';
  * @param {Express} app - Express app
  */
 export const initializeAPI = (app: Express) => {
-    const allowedOrigins = ['http://localhost:80'];
+    const allowedOrigins = ['http://localhost:80', 'http://localhost:3000'];
 
     const corsOptions = {
         origin: allowedOrigins,
@@ -43,6 +45,10 @@ export const initializeAPI = (app: Express) => {
     // Router
     app.use('/api/auth', authRouter);
     app.use('/api/user', userRouter);
+    
+    if(USE_GOOGLE_AUTH) {
+        app.use('/api/auth/google', authGoogleRouter);
+    }
 
     app.listen(PORT, () => {
         logger.info(`Server is running on port ${PORT}`);

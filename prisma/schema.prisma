@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  output = "../generated/prisma_client"
 }
 
 datasource db {
@@ -21,24 +22,25 @@ enum Role {
 }
 
 model User {
-  id        String  @id @default(ulid())
+  id        String    @id @default(ulid())
   firstName String?
   lastName  String?
-  email     String  @unique @map("username")
-  password  String
-  role      Role    @default(USER)
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime @updatedAt @db.Timestamptz(6)
+  email     String    @unique @map("username")
+  password  String?
+  role      Role      @default(USER)
+  googleId  String?   @unique @map("google_id")
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   lastLogin DateTime? @db.Timestamptz(6)
-  isActive  Boolean @default(true)
-  
+  isActive  Boolean   @default(true)
+
   @@index([email])
   @@map("users")
 }
 
 model RefreshToken {
-  id        String  @id @default(ulid())
-  userId    String  
+  id        String   @id @default(ulid())
+  userId    String
   token     String
   userAgent String
   ipAddress String

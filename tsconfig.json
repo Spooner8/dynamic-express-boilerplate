@@ -1,29 +1,22 @@
 {
     "compilerOptions": {
       // Enable latest features
-      "lib": ["ESNext", "DOM"],
-      "target": "ESNext",
-      "module": "ESNext",
+      "target": "ES6",
+      "module": "commonjs",
       "moduleDetection": "force",
-      "jsx": "react-jsx",
+      "esModuleInterop": true,
       "allowJs": true,
-  
-      // Bundler mode
-      "moduleResolution": "bundler",
-      "allowImportingTsExtensions": true,
-      "verbatimModuleSyntax": true,
-      "noEmit": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "noEmit": false,
   
       // Best practices
       "strict": true,
       "skipLibCheck": true,
       "noFallthroughCasesInSwitch": true,
-  
-      // Some stricter flags (disabled by default)
-      "noUnusedLocals": false,
-      "noUnusedParameters": false,
-      "noPropertyAccessFromIndexSignature": false,
+      "forceConsistentCasingInFileNames": true,
 
       "typeRoots": ["./node_modules/@types", "./src/types"],
-    }
+    },
+    "include": ["src/**/*"],
   }

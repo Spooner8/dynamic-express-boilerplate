@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import type { Request, Response } from 'express';
-import { authService } from '../services/auth/auth.ts';
-import db from '../services/database.ts';
+import { authService } from '../services/auth/auth';
+import db from '../services/database';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 const JWT_EXPIRATION = parseInt(process.env.JWT_EXPIRATION || '3600', 10);

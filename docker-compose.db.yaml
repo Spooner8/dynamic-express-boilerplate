@@ -1,0 +1,22 @@
+name: what-to-cook
+
+services:
+  db:
+    container_name: db
+    image: postgres
+    ports:
+      - '5432:5432'
+    env_file:
+      - db.env
+    volumes:
+      - what-to-cook-db:/var/lib/postgresql/data
+    networks:
+      - what-to-cook
+    restart: always
+
+volumes:
+  what-to-cook-db:
+
+networks:
+  what-to-cook:
+    driver: bridge

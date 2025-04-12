@@ -1,5 +1,5 @@
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
-import db from '../services/database.ts';
+import db from '../services/database';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'supersecret';
 

@@ -13,9 +13,8 @@
  */
 
 import bcrypt from 'bcrypt';
-import type { User } from '@prisma/client';
-import db from '../database.ts';
-
+import db from '../database';
+import type { User } from '../../../generated/prisma_client';
 
 /**
  * @description

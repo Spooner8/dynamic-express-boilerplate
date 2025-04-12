@@ -11,8 +11,8 @@
 
 import type { Request, Response } from 'express';
 import { Router } from 'express';
-import { logger } from '../services/log/logger.ts';
-import { authService } from '../services/auth/auth.ts';
+import { logger } from '../services/log/logger';
+import { authService } from '../services/auth/auth';
 
 const router = Router();
 

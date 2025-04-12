@@ -1,6 +1,36 @@
 name: what-to-cook
 
 services:
+  loadbalancer:
+    image: nginx:latest
+    container_name: loadbalancer
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '80:80'
+    networks:
+      - what-to-cook
+    restart: always
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - '9090:9090'
+    restart: always
+    networks:
+      - what-to-cook
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - '3100:3000'
+    restart: always
+    networks:
+      - what-to-cook
   db:
     container_name: db
     image: postgres
@@ -9,14 +39,50 @@ services:
     env_file:
       - db.env
     volumes:
-      - what-to-cook:/var/lib/postgresql/data
+      - what-to-cook-db:/var/lib/postgresql/data
     networks:
       - what-to-cook
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+  api-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-1
+    image: spoonersl/what-to-cook
+    env_file:
+      - api.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - what-to-cook
+    restart: always
+    # command: sh -c "npx prisma generate && npm run prod"
+
+  api-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-2
+    image: spoonersl/what-to-cook
+    env_file:
+      - api.env
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - what-to-cook
+    restart: always
+    # command: sh -c "npx prisma generate && npm run prod"
 
 volumes:
-  what-to-cook:
+  what-to-cook-db:
 
 networks:
-    what-to-cook:
-        driver: bridge
+  what-to-cook:
+    driver: bridge

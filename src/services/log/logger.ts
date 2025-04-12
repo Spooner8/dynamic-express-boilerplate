@@ -1,7 +1,7 @@
 import type { Request } from 'express'
 import pinoHttp from 'pino-http'
 import pino from 'pino'
-import { authService } from '../auth/auth.ts';
+import { authService } from '../auth/auth';
 
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
 
@@ -28,13 +28,7 @@ const httpLogger = pinoHttp({
   customProps: async (req: Request) => {
     try {
       const user = await authService.getCurrentUser(req);
-      if (!user) {
-        return { userId: null, username: null };
-      }
-      return {
-        userId: user?.id,
-        username: user?.email,
-      };
+      return user ? { userId: user.id, username: user.email } : { userId: null, username: null };
     } catch (error) {
       logger.error(error);
       return { userId: null, username: null };

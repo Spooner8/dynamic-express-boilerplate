@@ -13,20 +13,21 @@
 
 import type { Request, Response } from 'express';
 import { Router } from 'express';
-import { userService } from '../services/crud/user.ts';
-import { logger } from '../services/log/logger.ts';
-import { hasRole } from '../middleware/hasRole.ts';
-import { Role, type User } from '@prisma/client';
+import { userService } from '../services/crud/user';
+import { logger } from '../services/log/logger';
+import { hasRole } from '../middleware/hasRole';
+import type { User } from '../../generated/prisma_client';
 
 const router = Router();
 
 router.post('/signup', async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
-        const response =
-            username &&
-            password &&
-            (await userService.createUser(username, password));
+        if (!username || !password) {
+            res.status(400).send({ message: 'Username and password are required' });
+            return;
+        }
+        const response = await userService.createUser(username, password);
         if (!response) {
             res.status(401).send({ message: 'User not created' });
         } else {
@@ -60,7 +61,7 @@ router.get('/', async (_req: Request, res: Response) => {
     }
 });
 
-router.get('/:id', hasRole([Role.ADMIN]), async (req: Request, res: Response) => {
+router.get('/:id', hasRole(['ADMIN']), async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const user = id && (await userService.getUserById(id));
@@ -99,7 +100,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/:id', hasRole([Role.ADMIN]), async (req: Request, res: Response) => {
+router.delete('/:id', hasRole(['ADMIN']), async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const response = id && (await userService.deleteUser(id));
