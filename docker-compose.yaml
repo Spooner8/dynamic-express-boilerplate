@@ -55,7 +55,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api-1
-    image: spoonersl/dynamic-express-boilerplate
+    image: dynamic-express-boilerplate
     env_file:
       - api.env
     depends_on:
@@ -70,7 +70,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api-2
-    image: spoonersl/dynamic-express-boilerplate
+    image: dynamic-express-boilerplate
     env_file:
       - api.env
     depends_on:

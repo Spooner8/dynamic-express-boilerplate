@@ -51,7 +51,7 @@ npm install
   ```bash
   cp .env.example .env
   ```
-- Update the values in `.env` as needed (e.g., `DATABASE_URL`).
+- Update the values in `.env` as needed (e.g., `DATABASE_URL` should be set to `localhost` for local development or `db` if the database runs as a container in the stack).
 
 #### 3️⃣ Set Up Prisma
 - Install Prisma CLI:
