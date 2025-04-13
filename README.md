@@ -1,1 +1,1 @@
-# what-to-cook
+# Dynamic Express Boilerplate

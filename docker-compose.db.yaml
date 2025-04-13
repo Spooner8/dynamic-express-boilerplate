@@ -1,4 +1,4 @@
-name: what-to-cook
+name: dynamic-express-boilerplate
 
 services:
   db:
@@ -9,14 +9,14 @@ services:
     env_file:
       - db.env
     volumes:
-      - what-to-cook-db:/var/lib/postgresql/data
+      - dynamic-express-boilerplate-db:/var/lib/postgresql/data
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
     restart: always
 
 volumes:
-  what-to-cook-db:
+  dynamic-express-boilerplate-db:
 
 networks:
-  what-to-cook:
+  dynamic-express-boilerplate:
     driver: bridge

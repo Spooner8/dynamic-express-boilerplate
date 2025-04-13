@@ -1,14 +1,14 @@
 {
-  "name": "what-to-cook",
+  "name": "dynamic-express-boilerplate",
   "version": "1.0.0",
   "description": "Small API to get a selection of stored recipes for getting a idea what to cook today",
-  "homepage": "https://github.com/Spooner8/what-to-cook#readme",
+  "homepage": "https://github.com/Spooner8/dynamic-express-boilerplate#readme",
   "bugs": {
-    "url": "https://github.com/Spooner8/what-to-cook/issues"
+    "url": "https://github.com/Spooner8/dynamic-express-boilerplate/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Spooner8/what-to-cook.git"
+    "url": "git+https://github.com/Spooner8/dynamic-express-boilerplate.git"
   },
   "license": "MIT",
   "author": "Spooner8",

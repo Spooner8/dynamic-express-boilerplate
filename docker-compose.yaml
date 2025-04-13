@@ -1,4 +1,4 @@
-name: what-to-cook
+name: dynamic-express-boilerplate
 
 services:
   loadbalancer:
@@ -9,7 +9,7 @@ services:
     ports:
       - '80:80'
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
     restart: always
 
   prometheus:
@@ -21,7 +21,7 @@ services:
       - '9090:9090'
     restart: always
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
 
   grafana:
     image: grafana/grafana
@@ -30,9 +30,9 @@ services:
       - '3100:3000'
     restart: always
     volumes:
-      - what-to-cook-grafana:/var/lib/grafana
+      - dynamic-express-boilerplate-grafana:/var/lib/grafana
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
   db:
     container_name: db
     image: postgres
@@ -41,9 +41,9 @@ services:
     env_file:
       - db.env
     volumes:
-      - what-to-cook-db:/var/lib/postgresql/data
+      - dynamic-express-boilerplate-db:/var/lib/postgresql/data
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
@@ -55,14 +55,14 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api-1
-    image: spoonersl/what-to-cook
+    image: spoonersl/dynamic-express-boilerplate
     env_file:
       - api.env
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
     restart: always
 
   api-2:
@@ -70,20 +70,20 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: api-2
-    image: spoonersl/what-to-cook
+    image: spoonersl/dynamic-express-boilerplate
     env_file:
       - api.env
     depends_on:
       db:
         condition: service_healthy
     networks:
-      - what-to-cook
+      - dynamic-express-boilerplate
     restart: always
 
 volumes:
-  what-to-cook-db:
-  what-to-cook-grafana:
+  dynamic-express-boilerplate-db:
+  dynamic-express-boilerplate-grafana:
 
 networks:
-  what-to-cook:
+  dynamic-express-boilerplate:
     driver: bridge
