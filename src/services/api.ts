@@ -9,12 +9,15 @@ import { prometheus } from '../middleware/prometheus';
 import passport from './passport';
 
 // Routers
+import rolesRouter from '../router/roles';
+import permissionsRouter from '../router/permissions';
 import authRouter from '../router/auth';
 import authGoogleRouter from '../router/auth.google';
 import userRouter from '../router/user';
 
 const PORT = process.env.API_PORT || 3000;
 const LIMITER = (process.env.RATE_LIMITER || 'true') === 'true';
+const RBAC = (process.env.RBAC || 'true') === 'true';
 const USE_GOOGLE_AUTH = (process.env.USE_GOOGLE_AUTH || 'false') === 'true';
 
 /**
@@ -37,16 +40,21 @@ export const initializeAPI = (app: Express) => {
     app.use(bodyParser.json());
     app.use(cookieParser());
     app.use(cors(corsOptions));
-
+    app.use(httpLogger);
+    app.use(passport.initialize());
+    
     if (LIMITER) {
         app.use(limiter);
     }
-    app.use(httpLogger);
-    app.use(passport.initialize());
 
-    // Router
+    // Routers
     app.use('/api/auth', authRouter);
     app.use('/api/user', userRouter);
+
+    if (RBAC) {
+        app.use('/api/roles', rolesRouter);
+        app.use('/api/permissions', permissionsRouter);
+    }
     
     if(USE_GOOGLE_AUTH) {
         app.use('/api/auth/google', authGoogleRouter);

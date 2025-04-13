@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma_client"
+  output   = "../generated/prisma_client"
 }
 
 datasource db {
@@ -14,11 +14,42 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  USER
-  ADMIN
-  VIEWER
-  MODERATOR
+enum Methods {
+  GET
+  POST
+  PUT
+  PATCH
+  DELETE
+}
+
+model Role {
+  id          String       @id @default(ulid())
+  name        String       @unique
+  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
+  description String?
+  isSystem    Boolean      @default(false)
+  isAdmin     Boolean      @unique @default(false)
+  isDefault   Boolean      @unique @default(false)
+  isActive    Boolean      @default(true)
+  users       User[]
+  permissions Permission[]
+
+  @@map("roles")
+}
+
+model Permission {
+  id           String   @id @default(ulid())
+  routePattern String
+  method       Methods
+  role         Role     @relation(fields: [roleId], references: [id])
+  roleId       String   @map("role_id")
+  createdAt    DateTime @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+
+  @@unique([routePattern, method, roleId])
+  @@index([routePattern, roleId])
+  @@map("permissions")
 }
 
 model User {
@@ -27,14 +58,15 @@ model User {
   lastName  String?
   email     String    @unique @map("username")
   password  String?
-  role      Role      @default(USER)
+  role      Role      @relation(fields: [roleId], references: [id])
+  roleId    String    @map("role_id")
   googleId  String?   @unique @map("google_id")
   createdAt DateTime  @default(now()) @db.Timestamptz(6)
   updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   lastLogin DateTime? @db.Timestamptz(6)
   isActive  Boolean   @default(true)
 
-  @@index([email])
+  @@index([email, roleId])
   @@map("users")
 }
 
@@ -47,5 +79,6 @@ model RefreshToken {
   createdAt DateTime @default(now()) @db.Timestamptz(6)
   expiresAt DateTime @db.Timestamptz(6)
 
+  @@index([userId])
   @@map("refresh_tokens")
 }

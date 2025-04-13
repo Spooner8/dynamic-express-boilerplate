@@ -15,8 +15,8 @@ import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { userService } from '../services/crud/user';
 import { logger } from '../services/log/logger';
-import { hasRole } from '../middleware/hasRole';
 import type { User } from '../../generated/prisma_client';
+import { checkPermissions } from '../middleware/protection';
 
 const router = Router();
 
@@ -43,7 +43,7 @@ router.post('/signup', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/', async (_req: Request, res: Response) => {
+router.get('/', checkPermissions, async (_req: Request, res: Response) => {
     try {
         const users = await userService.getUsers();
         if (!users) {
@@ -61,7 +61,7 @@ router.get('/', async (_req: Request, res: Response) => {
     }
 });
 
-router.get('/:id', hasRole(['ADMIN']), async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const user = id && (await userService.getUserById(id));
@@ -100,7 +100,7 @@ router.put('/:id', async (req: Request, res: Response) => {
     }
 });
 
-router.delete('/:id', hasRole(['ADMIN']), async (req: Request, res: Response) => {
+router.delete('/:id', async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
         const response = id && (await userService.deleteUser(id));

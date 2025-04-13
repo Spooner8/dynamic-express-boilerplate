@@ -23,13 +23,31 @@ import type { User } from '../../../generated/prisma_client';
  * @param {string} email - The username of the user.
  * @param {string} password - The password of the user.
  * 
- * @returns The ID and username of the created user.
+ * @returns The created user.
 */
 async function createUser(email: string, password: string) {
+    const userExists = await db.user.findUnique({
+        where: { email },
+    });
+
+    if (userExists) {
+        throw new Error('User already exists');
+    }
+
+    const defaultRole = await db.role.findUnique({
+        where: { isDefault: true },
+        select: { id: true },
+    });
+
+    if (!defaultRole) {
+        throw new Error('Default role not found');
+    }
+
     const salt = await bcrypt.genSalt(10);
     const data = {
         email: email,
         password: await bcrypt.hash(password, salt),
+        roleId: defaultRole.id,
     };
     
     return await db.user.create({ data });

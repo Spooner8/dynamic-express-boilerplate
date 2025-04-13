@@ -13,6 +13,15 @@ export const googleStrategy = new GoogleStrategy(
     },
     async (_accessToken: string, _refreshToken: string, profile: Profile, done) => {
         try {
+            const defaultRole = await db.role.findUnique({
+                where: { isDefault: true },
+                select: { id: true },
+            });
+        
+            if (!defaultRole) {
+                throw new Error('Default role not found');
+            }
+
             const email = profile.emails && profile.emails[0]?.value;
             if (!email) {
                 return done(new Error('No email found'), false);
@@ -29,6 +38,9 @@ export const googleStrategy = new GoogleStrategy(
                     data: {
                         googleId: profile.id,
                         email,
+                        roleId: defaultRole.id,
+                        firstName: profile.name?.givenName || '',
+                        lastName: profile.name?.familyName || '',
                     },
                 });
                 return done(null, newUser);
