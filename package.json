@@ -1,7 +1,7 @@
 {
   "name": "dynamic-express-boilerplate",
   "version": "1.0.0",
-  "description": "Small API to get a selection of stored recipes for getting a idea what to cook today",
+  "description": "A dynamic express boilerplate with TypeScript, Prisma, and JWT authentication. Includes Google OAuth2.0 and Passport.js for authentication, and uses PostgreSQL as the database.",
   "homepage": "https://github.com/Spooner8/dynamic-express-boilerplate#readme",
   "bugs": {
     "url": "https://github.com/Spooner8/dynamic-express-boilerplate/issues"
