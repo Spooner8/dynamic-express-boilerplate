@@ -31,7 +31,6 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
 };
 
 export const checkPermissions = (req: Request, res: Response, next: NextFunction): void => {
-    logger.info(`Permissions active?: ${RBAC}`);
     if (!RBAC) {
         return next();
     }
