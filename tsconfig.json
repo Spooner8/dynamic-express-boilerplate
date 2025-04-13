@@ -2,13 +2,15 @@
     "compilerOptions": {
       // Enable latest features
       "target": "ES6",
-      "module": "commonjs",
+      "module": "NodeNext",
       "moduleDetection": "force",
       "esModuleInterop": true,
       "allowJs": true,
-      "outDir": "./dist",
+      "outDir": "dist",
       "rootDir": "./src",
       "noEmit": false,
+      "resolveJsonModule": true,
+      "isolatedModules": true,
   
       // Best practices
       "strict": true,
