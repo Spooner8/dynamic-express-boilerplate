@@ -6,13 +6,13 @@ import { logger } from '../log/logger';
 import { userService } from '../crud/user';
 import db from '../database';
 import type { JwtPayload } from 'jsonwebtoken';
+import { handleError } from '../../middleware/errorhandler';
 
 const login = async (req: Request, res: Response) => {
     try {
         passport.authenticate('local', { session: false, failureRedirect: '/api/auth/login' }, async (error: unknown, user: User) => {
             if (error || !user) {
-                logger.error({error}, 'Login failed');
-                return res.status(401).json({ message: 'Invalid credentials' });
+                handleError(error, res);
             }
 
             const { accessToken, refreshToken } = await generateTokens(user);
@@ -28,12 +28,7 @@ const login = async (req: Request, res: Response) => {
         })(req);
     }
     catch (error) {
-        logger.error(error);
-        if (error instanceof Error) {
-            return res.status(400).json({ message: error.message });
-        } else {
-            return res.status(400).json({ message: 'An unknown error occurred' });
-        }
+        handleError(error, res);
     }
 };
 
@@ -60,7 +55,7 @@ async function getCurrentUser(req: Request) {
         });
         return user;
     } catch (error: unknown) {
-        logger.error('Error getting current user', error);
+        handleError(error, null);
         return null;
     }
 }

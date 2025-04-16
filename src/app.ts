@@ -6,13 +6,12 @@
 
 import express from 'express';
 import { initializeAPI } from './services/api';
-import { logger } from './services/log/logger';
 
 const SERVER_ROLE = process.env.SERVER_ROLE || 'all';
-const allowedRoles = ['all', 'api', 'worker'];
+const allowedRoles = ['all', 'api', 'worker', 'logger'];
 
 if (!allowedRoles.includes(SERVER_ROLE)) {
-    logger.error(`Invalid SERVER_ROLE: ${SERVER_ROLE}`);
+    console.error(`Invalid SERVER_ROLE: ${SERVER_ROLE}`);
     process.exit(1);
 }
 

@@ -14,9 +14,9 @@
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import { userService } from '../services/crud/user';
-import { logger } from '../services/log/logger';
 import type { User } from '../../generated/prisma_client';
 import { checkPermissions } from '../middleware/protection';
+import { handleError } from '../middleware/errorhandler';
 
 const router = Router();
 
@@ -34,12 +34,7 @@ router.post('/signup', async (req: Request, res: Response) => {
             res.status(201).send({ 'User created': response });
         }
     } catch (error: unknown) {
-        logger.error(error);
-        if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: 'An unknown error occurred' });
-        }
+        handleError(error, res);
     }
 });
 
@@ -52,12 +47,7 @@ router.get('/', checkPermissions, async (_req: Request, res: Response) => {
             res.status(200).send(users);
         }
     } catch (error: unknown) {
-        logger.error(error);
-        if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: 'An unknown error occurred' });
-        }
+        handleError(error, res);
     }
 });
 
@@ -71,12 +61,7 @@ router.get('/:id', async (req: Request, res: Response) => {
             res.status(200).send(user);
         }
     } catch (error: unknown) {
-        logger.error(error);
-        if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: 'An unknown error occurred' });
-        }
+        handleError(error, res);
     }
 });
 
@@ -91,12 +76,7 @@ router.put('/:id', async (req: Request, res: Response) => {
             res.status(200).send({ 'User updated': response });
         }
     } catch (error: unknown) {
-        logger.error(error);
-        if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: 'An unknown error occurred' });
-        }
+        handleError(error, res);
     }
 });
 
@@ -110,12 +90,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
             res.status(200).send({ 'User deleted': response });
         }
     } catch (error: unknown) {
-        logger.error(error);
-        if (error instanceof Error) {
-            res.status(400).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: 'An unknown error occurred' });
-        }
+        handleError(error, res);
     }
 });
 

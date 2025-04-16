@@ -4,8 +4,9 @@ import { authService } from "../services/auth/auth";
 import { match } from "path-to-regexp";
 import { permissionService } from "../services/crud/permissions";
 import { logger } from "../services/log/logger";
+import { handleError } from "./errorhandler";
 
-const RBAC = (process.env.RBAC  || 'true') === 'true';
+const RBAC = (process.env.RBAC  || 'false') === 'true';
 
 export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
     if (!RBAC) {
@@ -23,9 +24,8 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
             }
             
             next();
-        } catch (error) {
-            logger.error('Error in isAdmin middleware:', error);
-            return res.status(500).json({ message: 'Internal Server Error' });
+        } catch (error: unknown) {
+            handleError(error, res);
         }
     })();
 };
@@ -53,13 +53,13 @@ export const checkPermissions = (req: Request, res: Response, next: NextFunction
             });
 
             if (!hasPermission) {
+                logger.warn(`User ${user.id} tried to access ${url} without permission`);
                 return res.status(403).json({ message: 'Forbidden' });
             }
 
             next();
-        } catch (error) {
-            logger.error('Error in checkPermissions middleware:', error);
-            return res.status(500).json({ message: 'Internal Server Error' });
+        } catch (error: unknown) {
+            handleError(error, res);
         }
     })();
 };

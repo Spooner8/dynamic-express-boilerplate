@@ -37,6 +37,11 @@ Customize the project using environment variables defined in `.env` or `api.env`
 
 ---
 
+### Metrics Configuration
+If the `COLLECT_METRICS` environment variable is set to `false`, you must remove Prometheus and Grafana services from the `docker-compose.yaml` file to avoid unnecessary resource usage. Simply delete or comment out the `prometheus` and `grafana` sections in the file.
+
+---
+
 ## 🛠️ Setup Instructions
 
 ### Local Deployment
@@ -52,6 +57,20 @@ npm install
   cp .env.example .env
   ```
 - Update the values in `.env` as needed (e.g., `DATABASE_URL` should be set to `localhost` for local development or `db` if the database runs as a container in the stack).
+
+---
+
+### Optional Variables
+If the following environment variables are not set, the application will use these default values:
+
+| Variable          | Default Value |
+|-------------------|---------------|
+| `LIMITER`         | `true`        |
+| `COLLECT_METRICS` | `false`       |
+| `RBAC`            | `false`       |
+| `USE_GOOGLE_AUTH` | `false`       |
+
+---
 
 #### 3️⃣ Set Up Prisma
 - Install Prisma CLI:
@@ -141,6 +160,11 @@ Grafana is used for visualizing metrics collected by Prometheus.
 
 ### Rate Limiter
 The rate limiter is configured to allow 500 requests per 15 minutes by default. You can adjust this in `src/middleware/rate-limiter.ts`.
+
+---
+
+## 🛠️ Extensibility
+The API has been designed to allow easy integration of additional services, such as a cache database or other utilities. This is achieved through the use of server roles and an `if` block, which control the activation or deactivation of such services. To add new services, update the relevant configuration files and the code in `src/server.ts`.
 
 ---
 

@@ -4,7 +4,7 @@ import 'dotenv/config';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { limiter } from '../middleware/rate-limiter';
-import { httpLogger, logger } from './log/logger';
+import { logger } from './log/logger';
 import { prometheus } from '../middleware/prometheus';
 import passport from './passport';
 
@@ -17,7 +17,8 @@ import userRouter from '../router/user';
 
 const PORT = process.env.API_PORT || 3000;
 const LIMITER = (process.env.RATE_LIMITER || 'true') === 'true';
-const RBAC = (process.env.RBAC || 'true') === 'true';
+const COLLECT_METRICS = (process.env.COLLECT_METRICS || 'false') === 'true';
+const RBAC = (process.env.RBAC || 'false') === 'true';
 const USE_GOOGLE_AUTH = (process.env.USE_GOOGLE_AUTH || 'false') === 'true';
 
 /**
@@ -36,11 +37,12 @@ export const initializeAPI = (app: Express) => {
 
     app.set('trust proxy', 1);
 
-    app.use(prometheus);
+    if (COLLECT_METRICS) {
+        app.use(prometheus);
+    }
     app.use(bodyParser.json());
     app.use(cookieParser());
     app.use(cors(corsOptions));
-    app.use(httpLogger);
     app.use(passport.initialize());
     
     if (LIMITER) {
@@ -61,6 +63,6 @@ export const initializeAPI = (app: Express) => {
     }
 
     app.listen(PORT, () => {
-        logger.info(`Server is running on port ${PORT}`);
+        logger.info(`API-Server is running on port ${PORT}`);
     });
 };

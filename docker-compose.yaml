@@ -33,6 +33,7 @@ services:
       - dynamic-express-boilerplate-grafana:/var/lib/grafana
     networks:
       - dynamic-express-boilerplate
+
   db:
     container_name: db
     image: postgres
@@ -50,6 +51,7 @@ services:
       interval: 5s
       timeout: 2s
       retries: 20
+      
   api-1:
     build:
       context: .
@@ -59,8 +61,8 @@ services:
     env_file:
       - api.env
     depends_on:
-      db:
-        condition: service_healthy
+      - logger
+      - db
     networks:
       - dynamic-express-boilerplate
     restart: always
@@ -74,8 +76,19 @@ services:
     env_file:
       - api.env
     depends_on:
-      db:
-        condition: service_healthy
+      - logger
+      - db
+    networks:
+      - dynamic-express-boilerplate
+    restart: always
+  
+  logger:
+    container_name: logger
+    image: express-logger
+    environment:
+      - SERVER_ROLE=all
+      - LOG_PORT=3001
+      - LOG_LEVEL=info
     networks:
       - dynamic-express-boilerplate
     restart: always

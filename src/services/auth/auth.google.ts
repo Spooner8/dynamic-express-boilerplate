@@ -5,25 +5,21 @@ import { User } from '../../../generated/prisma_client';
 import { logger } from '../log/logger';
 import { userService } from '../crud/user';
 import { authService } from './auth';
+import { handleError } from '../../middleware/errorhandler';
 
 const login = (req: Request, res: Response, next: NextFunction) => {
     try {
         passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
-    } catch (err) {
-        logger.error(err);
-        if (err instanceof Error) {
-            return res.status(400).json({ message: err.message });
-        } else {
-            return res.status(400).json({ message: 'An unknown error occurred' });
-        }
+    } catch (error: unknown) {
+        handleError(error, res);
     }
 };
 
 const callback = (req: Request, res: Response, next: NextFunction) => {
-    passport.authenticate('google', { failureRedirect: '/api/auth/login' }, async (err: unknown, user: User) => {
-        if (err) {
-            logger.error(err);
-            return res.status(400).json({ message: 'Authentication failed' });
+    passport.authenticate('google', { failureRedirect: '/api/auth/login' }, async (error: unknown, user: User) => {
+        if (error) {
+            handleError(error, null);
+            return res.status(500).json({ message: 'Internal server error' });
         }
 
         if (!user) {
@@ -42,7 +38,7 @@ const callback = (req: Request, res: Response, next: NextFunction) => {
             logger.info(`User ${user.email} logged in successfully`);
             return res.status(200).send({ message: 'User logged in' });
         } catch (error) {
-            logger.error(error);
+            handleError(error, res);
             return res.status(500).json({ message: 'Internal server error' });
         }
     })(req, res, next);

@@ -1,39 +1,35 @@
-import type { Request } from 'express'
-import pinoHttp from 'pino-http'
-import pino from 'pino'
-import { authService } from '../auth/auth';
+import 'dotenv/config';
+import axios from 'axios';
 
-const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
+const LOGGER_URL = process.env.LOGGER_URL || 'http://localhost:3001/api/log';
 
-/**
- * @description
- * Logger instance for logging messages
- */
-const logger = pino({
-  level: LOG_LEVEL,
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-    },
-  },
-})
-
-/**
- * @description
- * Logger instance for logging http requests
- */
-const httpLogger = pinoHttp({
-  logger: logger,
-  customProps: async (req: Request) => {
-    try {
-      const user = await authService.getCurrentUser(req);
-      return user ? { userId: user.id, username: user.email } : { userId: null, username: null };
-    } catch (error) {
-      logger.error(error);
-      return { userId: null, username: null };
-    }
+const logService = axios.create({
+  baseURL: LOGGER_URL,
+  headers: {
+    'Content-Type': 'application/json',
   },
 });
 
-export { logger, httpLogger }
+const logToService = async (level: string, message: string, meta?: object) => {
+  try {
+    await logService.post('/', {
+      level,
+      message,
+      meta,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    } else {
+      console.error('An unknown error occurred while logging to service');
+    }
+  }
+}
+
+const logger = {
+  info: (message: string, meta?: Record<string, unknown>) => logToService('info', message, meta),
+  error: (message: string, meta?: Record<string, unknown>) => logToService('error', message, meta),
+  warn: (message: string, meta?: Record<string, unknown>) => logToService('warn', message, meta),
+};
+
+export { logger };
