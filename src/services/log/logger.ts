@@ -2,6 +2,7 @@ import 'dotenv/config';
 import axios from 'axios';
 
 const LOGGER_URL = process.env.LOGGER_URL || 'http://localhost:3001/api/log';
+const LAAS = (process.env.LAAS || 'false') === 'true';
 
 const logService = axios.create({
   baseURL: LOGGER_URL,
@@ -12,11 +13,15 @@ const logService = axios.create({
 
 const logToService = async (level: string, message: string, meta?: object) => {
   try {
-    await logService.post('/', {
-      level,
-      message,
-      meta,
-    });
+    if (LAAS) {
+      await logService.post('/', {
+        level,
+        message,
+        meta,
+      });
+    } else {
+      console.log(`[${level}] ${message}`, meta ? JSON.stringify(meta) : '');
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);

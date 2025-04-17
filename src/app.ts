@@ -8,7 +8,7 @@ import express from 'express';
 import { initializeAPI } from './services/api';
 
 const SERVER_ROLE = process.env.SERVER_ROLE || 'all';
-const allowedRoles = ['all', 'api', 'worker', 'logger'];
+const allowedRoles = ['all', 'api', 'worker'];
 
 if (!allowedRoles.includes(SERVER_ROLE)) {
     console.error(`Invalid SERVER_ROLE: ${SERVER_ROLE}`);

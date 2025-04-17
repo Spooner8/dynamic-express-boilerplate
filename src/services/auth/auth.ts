@@ -11,8 +11,10 @@ import { handleError } from '../../middleware/errorhandler';
 const login = async (req: Request, res: Response) => {
     try {
         passport.authenticate('local', { session: false, failureRedirect: '/api/auth/login' }, async (error: unknown, user: User) => {
-            if (error || !user) {
-                handleError(error, res);
+            if (error) return handleError(error, res);
+            if (!user) {
+                logger.error('Invalid credentials');
+                return res.status(401).json({ message: 'Invalid credentials' });
             }
 
             const { accessToken, refreshToken } = await generateTokens(user);

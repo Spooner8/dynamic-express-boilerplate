@@ -19,7 +19,6 @@ const callback = (req: Request, res: Response, next: NextFunction) => {
     passport.authenticate('google', { failureRedirect: '/api/auth/login' }, async (error: unknown, user: User) => {
         if (error) {
             handleError(error, null);
-            return res.status(500).json({ message: 'Internal server error' });
         }
 
         if (!user) {
@@ -39,7 +38,6 @@ const callback = (req: Request, res: Response, next: NextFunction) => {
             return res.status(200).send({ message: 'User logged in' });
         } catch (error) {
             handleError(error, res);
-            return res.status(500).json({ message: 'Internal server error' });
         }
     })(req, res, next);
 };
