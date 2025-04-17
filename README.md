@@ -30,6 +30,8 @@ Customize the project using environment variables defined in `.env` or `api.env`
 - `RATE_LIMITER`: Set to `true` to enable rate limiting.
 
 ### Logging
+- `LAAS`: Set to `true` to enable Logging as a service. Requires additional repository: [express-logger](https://github.com/Spooner8/express-logger)
+- `LOGGER_URL`: Necessary if `LAAS` is set to true
 - `LOG_LEVEL`: Set the logging level (e.g., `info`, `debug`).
 
 ### Monitoring
@@ -66,6 +68,7 @@ If the following environment variables are not set, the application will use the
 | Variable          | Default Value |
 |-------------------|---------------|
 | `LIMITER`         | `true`        |
+| `LAAS`            | `false`       |
 | `COLLECT_METRICS` | `false`       |
 | `RBAC`            | `false`       |
 | `USE_GOOGLE_AUTH` | `false`       |
@@ -160,6 +163,9 @@ Grafana is used for visualizing metrics collected by Prometheus.
 
 ### Rate Limiter
 The rate limiter is configured to allow 500 requests per 15 minutes by default. You can adjust this in `src/middleware/rate-limiter.ts`.
+
+### Logger
+If LAAS (Logger as a service) is set to true, you have to run the service [express-logger](https://github.com/Spooner8/express-logger)
 
 ---
 
