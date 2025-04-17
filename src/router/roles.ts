@@ -1,3 +1,15 @@
+/**
+ * @fileoverview  
+ * This file contains the routes for managing roles in the application. 
+ * 
+ * Routes:  
+ * - POST /create: Create a new role.
+ * - GET /:id: Get a role by ID.
+ * - GET /: Get all roles.
+ * - PUT /:id: Update a role by ID.
+ * - DELETE /:id: Delete a role by ID. (Soft delete)
+ */
+
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import type { Role } from '../../generated/prisma_client';

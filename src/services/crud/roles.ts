@@ -4,12 +4,13 @@
  * The services are used to interact with the database and perform CRUD operations.
  * 
  * It handles the following operations:  
- * 1. createUser - Create a new user in the database.  
- * 2. getUsers - Fetch all users from the database.  
- * 3. getUserById - Fetch a user by its ID from the database.  
- * 4. getUserByUsername - Fetch a user by its username from the database.  
- * 5. updateUser - Update a user in the database.  
- * 6. deleteUser - Delete a user from the database.
+ * - Create a new role
+ * - Get all roles
+ * - Get a role by ID
+ * - Get the default role
+ * - Get the admin role
+ * - Update a role
+ * - Delete a role (Soft delete)
  */
 
 import db from '../database';

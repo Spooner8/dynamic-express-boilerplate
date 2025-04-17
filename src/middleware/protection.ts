@@ -1,3 +1,13 @@
+/**
+ * @fileoverview
+ * This file contains middleware functions for role-based access control (RBAC) in the application.
+ * 
+ * Middleware:
+ * - isAdmin: Checks if the user is an admin.
+ * - checkPermissions: Checks if the user has the required permissions to access a specific route.
+ * 
+ */
+
 import db from "../services/database";
 import type { Request, Response, NextFunction } from 'express';
 import { authService } from "../services/auth/auth";

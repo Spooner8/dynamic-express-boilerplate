@@ -1,3 +1,15 @@
+/**
+ * @fileoverview  
+ * This file contains the routes for managing permissions in the application.
+ * 
+ * Routes:  
+ * - POST /create: Create a new permission.
+ * - GET /:id: Get a permission by ID.
+ * - GET /: Get all permissions.
+ * - PUT /:id: Update a permission by ID.
+ * - DELETE /:id: Delete a permission by ID. (Hard delete)
+ */
+
 import type { Request, Response } from 'express';
 import { Router } from 'express';
 import type { Permission } from '../../generated/prisma_client';

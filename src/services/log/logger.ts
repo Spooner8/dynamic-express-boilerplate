@@ -1,3 +1,9 @@
+/**
+ * @fileoverview
+ * This file contains the way which the logger is configured in the application.
+ * It uses the pino logger for local logging and a custom logger for remote logging.
+ */
+
 import 'dotenv/config';
 import axios from 'axios';
 import pino from 'pino';
@@ -19,6 +25,14 @@ const logService = axios.create({
   },
 });
 
+/**
+ * @description
+ * Logs a message to the remote logging service.
+ * 
+ * @param {string} level The log level (info, error, warn)
+ * @param {string} message The log message
+ * @param {object} meta The log metadata (optional)
+ */
 const logToService = async (level: string, message: string, meta?: object) => {
   try {
     await logService.post('/', {

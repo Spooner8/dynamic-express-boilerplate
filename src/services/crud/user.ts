@@ -3,13 +3,13 @@
  * This file contains the CRUD services for the users table.  
  * The services are used to interact with the database and perform CRUD operations.
  * 
- * It handles the following operations:  
- * 1. createUser - Create a new user in the database.  
- * 2. getUsers - Fetch all users from the database.  
- * 3. getUserById - Fetch a user by its ID from the database.  
- * 4. getUserByUsername - Fetch a user by its username from the database.   
- * 5. updateUser - Update a user in the database.  
- * 6. deleteUser - Delete a user from the database.  
+ * It handles the following operations:
+ * - Create a new user
+ * - Get all users
+ * - Get a user by ID
+ * - Get a user by username
+ * - Update a user
+ * - Delete a user (Soft delete)
  */
 
 import bcrypt from 'bcrypt';
@@ -108,8 +108,9 @@ async function updateUser(id: string, data: User) {
  * @param {string} id - The ID of the user to delete.
 */
 async function deleteUser(id: string) {
-    return await db.user.delete({
-        where: { id }
+    return await db.user.update({
+        where: { id },
+        data: { isActive: false }
     });
 }
 

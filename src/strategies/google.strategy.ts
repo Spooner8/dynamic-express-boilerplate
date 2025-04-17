@@ -5,6 +5,17 @@ const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || 'your-google-client-id'
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || 'your-google-client-secret';
 const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/auth/google/callback';
 
+
+/**
+ * @description
+ * This strategy is used to authenticate users using their Google account.
+ * It uses the passport-google-oauth20 strategy to handle the authentication process.
+ * 
+ * @usage
+ * For Google logins (User is saved in the database with the googleId and email)
+ * 
+ * @see https://www.passportjs.org/packages/passport-google-oauth20/
+ */
 export const googleStrategy = new GoogleStrategy(
     {
         clientID: GOOGLE_CLIENT_ID,

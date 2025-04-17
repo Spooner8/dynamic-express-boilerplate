@@ -4,7 +4,12 @@
  * The services are used to interact with the database and perform CRUD operations.
  * 
  * It handles the following operations:  
- * 
+ * - Create a new permission
+ * - Get all permissions
+ * - Get a permission by ID
+ * - Get permissions by role ID
+ * - Update a permission
+ * - Delete a permission (Hard delete)
  */
 
 import db from '../database';
