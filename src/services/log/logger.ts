@@ -1,8 +1,16 @@
 import 'dotenv/config';
 import axios from 'axios';
+import pino from 'pino';
 
 const LOGGER_URL = process.env.LOGGER_URL || 'http://localhost:3001/api/log';
 const LAAS = (process.env.LAAS || 'false') === 'true';
+const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
+
+interface LAASLogger {
+  info: (message: string, meta?: Record<string, unknown>) => void;
+  error: (message: string, meta?: Record<string, unknown>) => void;
+  warn: (message: string, meta?: Record<string, unknown>) => void;
+}
 
 const logService = axios.create({
   baseURL: LOGGER_URL,
@@ -13,15 +21,11 @@ const logService = axios.create({
 
 const logToService = async (level: string, message: string, meta?: object) => {
   try {
-    if (LAAS) {
-      await logService.post('/', {
-        level,
-        message,
-        meta,
-      });
-    } else {
-      console.log(`[${level}] ${message}`, meta ? JSON.stringify(meta) : '');
-    }
+    await logService.post('/', {
+      level,
+      message,
+      meta,
+    });
   } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(error.message);
@@ -31,10 +35,23 @@ const logToService = async (level: string, message: string, meta?: object) => {
   }
 }
 
-const logger = {
-  info: (message: string, meta?: Record<string, unknown>) => logToService('info', message, meta),
-  error: (message: string, meta?: Record<string, unknown>) => logToService('error', message, meta),
-  warn: (message: string, meta?: Record<string, unknown>) => logToService('warn', message, meta),
-};
+let logger: typeof LAAS extends true ? pino.Logger : LAASLogger;
+if (LAAS) {
+  logger = {
+    info: (message: string, meta?: Record<string, unknown>) => logToService('info', message, meta),
+    error: (message: string, meta?: Record<string, unknown>) => logToService('error', message, meta),
+    warn: (message: string, meta?: Record<string, unknown>) => logToService('warn', message, meta),
+  };
+} else {
+  logger = pino({
+    level: LOG_LEVEL,
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+      },
+    },
+  })
+}
 
 export { logger };
