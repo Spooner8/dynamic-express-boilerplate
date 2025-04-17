@@ -47,10 +47,10 @@ services:
       - dynamic-express-boilerplate
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      test: ["CMD-SHELL", "pg_isready -U postgres -d example-db"]
       interval: 5s
       timeout: 2s
-      retries: 20
+      retries: 10
       
   api-1:
     build:
