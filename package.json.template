@@ -1,17 +1,17 @@
 {
-  "name": "dynamic-express-boilerplate",
+  "name": "__PROJECT_NAME__",
   "version": "1.0.0",
   "description": "__DESCRIPTION__",
-  "homepage": "https://github.com/Spooner8/dynamic-express-boilerplate#readme",
+  "homepage": "https://github.com/your-username/__PROJECT_NAME__#readme",
   "bugs": {
-    "url": "https://github.com/Spooner8/dynamic-express-boilerplate/issues"
+    "url": "https://github.com/your-username/__PROJECT_NAME__/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Spooner8/dynamic-express-boilerplate.git"
+    "url": "git+https://github.com/your-username/__PROJECT_NAME__.git"
   },
   "license": "MIT",
-  "author": "Spooner8",
+  "author": "your-username",
   "scripts": {
     "test": "test",
     "build": "tsc",
