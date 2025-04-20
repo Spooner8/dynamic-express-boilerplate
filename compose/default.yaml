@@ -1,0 +1,68 @@
+name: __PROJECT_NAME__
+
+services:
+  loadbalancer:
+    image: nginx:latest
+    container_name: loadbalancer
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - '80:80'
+    networks:
+      - __PROJECT_NAME__
+    restart: always
+
+  db:
+    container_name: db
+    image: postgres
+    ports:
+      - '5432:5432'
+    env_file:
+      - db.env
+    volumes:
+      - __PROJECT_NAME__-db:/var/lib/postgresql/data
+    networks:
+      - __PROJECT_NAME__
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d __DB_NAME__"]
+      interval: 5s
+      timeout: 2s
+      retries: 10
+      
+  api-1:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-1
+    image: __PROJECT_NAME__
+    env_file:
+      - api.env
+    depends_on:
+      - logger
+      - db
+    networks:
+      - __PROJECT_NAME__
+    restart: always
+
+  api-2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-2
+    image: __PROJECT_NAME__
+    env_file:
+      - api.env
+    depends_on:
+      - logger
+      - db
+    networks:
+      - dynamic-express-boilerplate
+    restart: always
+
+volumes:
+  __PROJECT_NAME__-db:
+
+networks:
+  __PROJECT_NAME__:
+    driver: bridge
