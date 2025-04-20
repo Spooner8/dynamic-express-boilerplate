@@ -6,8 +6,8 @@ events {
 
 http {
     upstream __PROJECT_NAME__-backend {
-        server api-1:3000;
-        server api-2:3000;
+        server api-1:__PORT__;
+        server api-2:__PORT__;
     }
     
     upstream logger {
