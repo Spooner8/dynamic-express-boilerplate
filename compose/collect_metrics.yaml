@@ -19,3 +19,6 @@ grafana:
         - __PROJECT_NAME__-grafana:/var/lib/grafana
     networks:
         - __PROJECT_NAME__
+
+volumes:
+    __PROJECT_NAME__-grafana:

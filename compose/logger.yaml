@@ -1,10 +1,10 @@
 logger:
-  container_name: logger
-  image: spoonersl/express-logger
-  environment:
-    - SERVER_ROLE=all
-    - LOG_PORT=3001
-    - LOG_LEVEL=info
-  networks:
-    - __PROJECT_NAME__
-  restart: always
+    container_name: logger
+    image: spoonersl/express-logger
+    environment:
+        - SERVER_ROLE=all
+        - LOG_PORT=3001
+        - LOG_LEVEL=info
+    networks:
+        - __PROJECT_NAME__
+    restart: always
