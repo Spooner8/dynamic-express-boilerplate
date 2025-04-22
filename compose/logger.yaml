@@ -1,19 +1,10 @@
-Services:
-  api-1:
-    depends_on:
-        - logger
-
-  api-2:
-    depends_on:
-        - logger
-
-  logger:
-    container_name: logger
-    image: spoonersl/express-logger
-    environment:
-      - SERVER_ROLE=all
-      - LOG_PORT=3001
-      - LOG_LEVEL=info
-    networks:
-      - __PROJECT_NAME__
-    restart: always
+logger:
+  container_name: logger
+  image: spoonersl/express-logger
+  environment:
+    - SERVER_ROLE=all
+    - LOG_PORT=3001
+    - LOG_LEVEL=info
+  networks:
+    - __PROJECT_NAME__
+  restart: always
