@@ -1,24 +1,21 @@
 prometheus:
-  image: prom/prometheus
-  container_name: prometheus
-  volumes:
-    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-  ports:
-    - '9090:9090'
-  restart: always
-  networks:
-    - __PROJECT_NAME__
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+        - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+        - '9090:9090'
+    restart: always
+    networks:
+        - __PROJECT_NAME__
 
 grafana:
-  image: grafana/grafana
-  container_name: grafana
-  ports:
-    - '3100:3000'
-  restart: always
-  volumes:
-    - __PROJECT_NAME__-grafana:/var/lib/grafana
-  networks:
-    - __PROJECT_NAME__
-
-volumes:
-  __PROJECT_NAME__-grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+        - '3100:3000'
+    restart: always
+    volumes:
+        - __PROJECT_NAME__-grafana:/var/lib/grafana
+    networks:
+        - __PROJECT_NAME__
