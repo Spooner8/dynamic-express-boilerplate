@@ -1,3 +1,11 @@
+api-1:
+  depends_on:
+      - logger
+
+api-2:
+  depends_on:
+      - logger
+
 logger:
   container_name: logger
   image: spoonersl/express-logger
