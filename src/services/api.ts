@@ -7,6 +7,8 @@ import { limiter } from '../middleware/rate-limiter';
 import { logger } from './log/logger';
 import { prometheus } from '../middleware/prometheus';
 import passport from './passport';
+import swaggerSpec from './swagger';
+import swaggerUi from 'swagger-ui-express';
 
 // Routers
 import rolesRouter from '../router/roles';
@@ -61,6 +63,8 @@ export const initializeAPI = (app: Express) => {
     if(USE_GOOGLE_AUTH) {
         app.use('/api/auth/google', authGoogleRouter);
     }
+
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
     app.listen(PORT, () => {
         logger.info(`API-Server is running on port ${PORT}`);
