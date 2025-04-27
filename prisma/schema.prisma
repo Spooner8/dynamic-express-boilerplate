@@ -29,8 +29,8 @@ model Role {
   updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
   description String?
   isSystem    Boolean      @default(false)
-  isAdmin     Boolean      @unique @default(false)
-  isDefault   Boolean      @unique @default(false)
+  isAdmin     Boolean      @default(false)
+  isDefault   Boolean      @default(false)
   isActive    Boolean      @default(true)
   users       User[]
   permissions Permission[]
