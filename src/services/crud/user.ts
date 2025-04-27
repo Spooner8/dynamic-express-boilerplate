@@ -34,7 +34,7 @@ async function createUser(email: string, password: string) {
         throw new Error('User already exists');
     }
 
-    const defaultRole = await db.role.findUnique({
+    const defaultRole = await db.role.findFirst({
         where: { isDefault: true },
         select: { id: true },
     });
