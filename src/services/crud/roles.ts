@@ -23,6 +23,31 @@ import { Role } from '../../../generated/prisma_client';
  * @returns The the created role.
 */
 async function createRole(role: Role) {
+    const existingRole = await db.role.findUnique({
+        where: { name: role.name }
+    });
+    if (existingRole) {
+        throw new Error('Role already exists');
+    }
+
+    if (role.isAdmin) {
+        const existingAdminRole = await db.role.findFirst({
+            where: { isAdmin: true },
+        });
+        if (existingAdminRole && existingAdminRole.id !== role.id) {
+            throw new Error('Admin role already exists');
+        }
+    }
+
+    if (role.isDefault) {
+        const existingDefaultRole = await db.role.findFirst({
+            where: { isDefault: true },
+        });
+        if (existingDefaultRole && existingDefaultRole.id !== role.id) {
+            throw new Error('Default role already exists');
+        }
+    }
+
     return await db.role.create({ data: role });
 }
 
@@ -56,7 +81,7 @@ async function getRoleById(id: string) {
  * @returns The id of the default role or null if not found.
  */
 async function getDefaultRole() {
-    const defaultRoleId = await db.role.findUnique({
+    const defaultRoleId = await db.role.findFirst({
         where: { isDefault: true },
     });
 
@@ -71,7 +96,7 @@ async function getDefaultRole() {
  * @returns The id of the admin role or null if not found.
  */
 async function getAdminRole() {
-    const adminRoleId = await db.role.findUnique({
+    const adminRoleId = await db.role.findFirst({
         where: { isAdmin: true },
     });
 
@@ -87,6 +112,10 @@ async function getAdminRole() {
  * @param {Role} role - The updated role data.
  */
 async function updateRole(id: string, role: Role) {
+    const existingRole = await db.role.findUnique({ where: { id } });
+    if (!existingRole) {
+        return;
+    }
     return await db.role.update({
         where: { id },
         data: role,
@@ -101,6 +130,10 @@ async function updateRole(id: string, role: Role) {
  * @param {string} id - The ID of the role to deactivate.
  */
 async function deleteRole(id: string) {
+    const existingRole = await db.role.findUnique({ where: { id } });
+    if (!existingRole) {
+        return null;
+    }
     return await db.role.update({
         where: { id },
         data: {

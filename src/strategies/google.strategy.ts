@@ -24,7 +24,7 @@ export const googleStrategy = new GoogleStrategy(
     },
     async (_accessToken: string, _refreshToken: string, profile: Profile, done) => {
         try {
-            const defaultRole = await db.role.findUnique({
+            const defaultRole = await db.role.findFirst({
                 where: { isDefault: true },
                 select: { id: true },
             });

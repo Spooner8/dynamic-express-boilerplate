@@ -37,7 +37,7 @@ const login = async (req: Request, res: Response) => {
 const logout = async (req: Request, res: Response) => {
     const user = await getCurrentUser(req);
     if (!user) {
-        return res.status(401).json({ message: 'User not found' });
+        return res.status(404).json({ message: 'User not found' });
     }
     await tokenService.expireToken(req, res);
     await tokenService.expireRefreshToken(req, res);
@@ -71,7 +71,7 @@ async function generateTokens(user: User) {
 async function refreshTokens(req: Request, res: Response) {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
-        return res.status(401).json({ message: 'Refresh token not found' });
+        return res.status(404).json({ message: 'Refresh token not found' });
     }
 
     const payload = await tokenService.verifyRefreshToken(refreshToken, req) as JwtPayload;
@@ -86,12 +86,12 @@ async function refreshTokens(req: Request, res: Response) {
     });
 
     if (!storedToken) {
-        return res.status(401).json({ message: 'Refresh token not found' });
+        return res.status(404).json({ message: 'Refresh token not found' });
     }
     const user = await userService.getUserById(payload.id);
 
     if (!user) {
-        return res.status(401).json({ message: 'User not found' });
+        return res.status(404).json({ message: 'User not found' });
     } else {
         const newAccessToken = tokenService.generateAccessToken(user.id, user.email);
         const newRefreshToken = tokenService.generateRefreshToken(user.id);

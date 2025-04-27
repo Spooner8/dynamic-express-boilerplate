@@ -23,6 +23,20 @@ import { Permission } from '../../../generated/prisma_client';
  * @returns The created permission.
  */
 async function createPermission(permission: Permission) {
+    const validRole = await db.role.findUnique({
+        where: { id: permission.roleId }
+    });
+    if (!validRole) {
+        throw new Error('Role does not exist');
+    }
+
+    const permissionExists = await db.permission.findUnique({
+        where: { routePattern_method_roleId: { routePattern: permission.routePattern, method: permission.method, roleId: permission.roleId } }
+    });
+    if (permissionExists) {
+        throw new Error('Permission already exists');
+    }
+
     return await db.permission.create({ data: permission });
 }
 
@@ -73,6 +87,12 @@ async function getPermissionById(id: string) {
  * @returns The updated permission object.
  */
 async function updatePermission(id: string, permission: Permission) {
+    const permissionExists = await db.permission.findUnique({
+        where: { id }
+    });
+    if (!permissionExists) {
+        return null;
+    }
     return await db.permission.update({
         where: { id },
         data: permission
@@ -88,6 +108,12 @@ async function updatePermission(id: string, permission: Permission) {
  * @returns The deleted permission object.
  */
 async function deletePermission(id: string) {
+    const permissionExists = await db.permission.findUnique({
+        where: { id }
+    });
+    if (!permissionExists) {
+        return null;
+    }
     return await db.permission.delete({
         where: { id }
     });

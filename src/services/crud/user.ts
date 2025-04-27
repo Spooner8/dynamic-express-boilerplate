@@ -86,24 +86,47 @@ async function getUserByUsername(username: string) {
  * Update a user in the database.
  * 
  * @param {string} id - The ID of the user to update.
- * @param {User} data - The updated user data.
+ * @param {User} updatedUser - The updated user data.
+ * @returns The updated user object.
 */
-async function updateUser(id: string, data: User) {
-    if (data.password) {
+async function updateUser(id: string, updatedUser: User) {
+    const userExists = await db.user.findUnique({
+        where: { id },
+    });
+    if (!userExists) {
+        return null;
+    }
+
+    const existingUser = await db.user.findUnique({
+        where: { email: updatedUser.email },
+    });
+    if (existingUser && existingUser.id !== id) {
+        throw new Error('Email already exists');
+    }
+
+    if (!userExists.googleId && updatedUser.password && updatedUser.password === '') {
+        updatedUser.password = userExists.password;
+    }
+
+    if (userExists.googleId && updatedUser.googleId && userExists.googleId !== updatedUser.googleId) {
+        updatedUser.googleId = userExists.googleId;
+    }
+
+    if (updatedUser.password) {
         const user = await db.user.findUnique({ where: { id } });
-        if (user && user.password !== data.password) {
-            data.password = await bcrypt.hash(data.password, 10);
+        if (user && user.password !== updatedUser.password) {
+            updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
         }
     }
     
     return await db.user.update({
-        where: { id }, data
+        where: { id }, data: updatedUser
     });
 }
 
 /**
  * @description
- * Delete a user from the database.
+ * Delete a user from the database. (Soft delete)
  * 
  * @param {string} id - The ID of the user to delete.
 */
