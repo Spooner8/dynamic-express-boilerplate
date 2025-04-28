@@ -7,7 +7,7 @@ import { limiter } from '../middleware/rate-limiter';
 import { logger } from './log/logger';
 import { prometheus } from '../middleware/prometheus';
 import passport from './passport';
-import swaggerSpec from './swagger';
+import swaggerSpec from './docs/swagger';
 import swaggerUi from 'swagger-ui-express';
 
 // Routers
@@ -17,6 +17,7 @@ import authRouter from '../router/auth';
 import authGoogleRouter from '../router/auth.google';
 import userRouter from '../router/user';
 
+const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.API_PORT || 3000;
 const LIMITER = (process.env.RATE_LIMITER || 'true') === 'true';
 const COLLECT_METRICS = (process.env.COLLECT_METRICS || 'false') === 'true';
@@ -64,7 +65,9 @@ export const initializeAPI = (app: Express) => {
         app.use('/api/auth/google', authGoogleRouter);
     }
 
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    if (NODE_ENV === 'development') {
+        app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    }
 
     app.listen(PORT, () => {
         logger.info(`API-Server is running on port ${PORT}`);
