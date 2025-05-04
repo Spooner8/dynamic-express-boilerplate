@@ -7,6 +7,7 @@
  * - POST /api/user/signup: Creates a new user.  
  * - GET /api/user: Retrieves all users.  
  * - GET /api/user/:id: Retrieves a user by ID.  
+ * - GET /api/user/name: Retrieves a user by username.
  * - PUT /api/user/:id: Updates a user by ID.  
  * - DELETE /api/user/:id: Deletes a user by ID.
  */
@@ -51,6 +52,23 @@ router.get('/', checkPermissions, async (_req: Request, res: Response) => {
     }
 });
 
+router.get('/name/', checkPermissions, async (req: Request, res: Response) => {
+    try {
+        const username = req.query.username as string;
+        if (!username) {
+            res.status(400).send({ message: 'Username is required' });
+            return;
+        }
+        const user = await userService.getUserByUsername(username);
+        if (!user) {
+            res.status(404).send({ message: 'User not found' });
+        } else {
+            res.status(200).send(user);
+        }
+    } catch (error: unknown) {
+        handleError(error, res);
+    }
+});
 
 router.get('/:id', checkPermissions, async (req: Request, res: Response) => {
     try {

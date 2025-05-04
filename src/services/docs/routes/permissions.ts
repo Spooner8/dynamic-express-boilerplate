@@ -286,6 +286,105 @@ const permissionPaths = {
                 }
             }
         }
+    },
+    "/api/permissions/role/{id}": {
+        "get": {
+            "summary": "Get permissions by role ID",
+            "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "The ID of the role to retrieve permissions for"
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Returns the permissions for the specified role ID",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Permission[]"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Permissions not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Permissions not found"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/api/permissions/params": {
+        "get": {
+            "summary": "Get a permission by route pattern, method, and role ID",
+            "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
+            "requestBody": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/Permission"
+                        }
+                    }
+                }
+            },
+            "responses": {
+                "200": {
+                    "description": "Returns the permission with the specified parameters",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Permission"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Permission not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Permission not found"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 };
 

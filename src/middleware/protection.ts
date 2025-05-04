@@ -49,7 +49,7 @@ export const checkPermissions = (req: Request, res: Response, next: NextFunction
         try {
             const user = await authService.getCurrentUser(req);
             const method = req.method.toUpperCase();
-            const url = req.originalUrl;
+            const url = req.originalUrl.split('?')[0];
 
             if (!user) {
                 return res.status(401).json({ message: 'Unauthorized' });

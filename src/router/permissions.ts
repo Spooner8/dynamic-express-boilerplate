@@ -6,6 +6,8 @@
  * - POST /create: Create a new permission.
  * - GET /:id: Get a permission by ID.
  * - GET /: Get all permissions.
+ * - GET /role/:id: Get all permissions by role ID.
+ * - GET /params: Get permission by params.
  * - PUT /:id: Update a permission by ID.
  * - DELETE /:id: Delete a permission by ID. (Hard delete)
  */
@@ -33,8 +35,7 @@ router.post('/', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(201).send({ message: 'Permission successfully created', permission: response });
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -47,8 +48,7 @@ router.get('/', checkPermissions, async (_req: Request, res: Response) => {
         } else {
             res.status(200).send(permissions);
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -62,8 +62,39 @@ router.get('/:id', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(200).send(permission);
         }
+    } catch (error: unknown) {
+        handleError(error, res);
     }
-    catch (error: unknown) {
+});
+
+router.get('/role/:Id', checkPermissions, async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+        const permissions = id && (await permissionService.getPermissionByRoleId(id));
+        if (!permissions) {
+            res.status(404).send({ message: 'Permissions not found' });
+        } else {
+            res.status(200).send(permissions);
+        }
+    } catch (error: unknown) {
+        handleError(error, res);
+    }
+});
+
+router.get('/params', checkPermissions, async (req: Request, res: Response) => {
+    try {
+        const permission: Permission = req.body;
+        if (!permission.routePattern || !permission.method || !permission.roleId) {
+            res.status(400).send({ message: 'Not all required fields are given' });
+            return;
+        }
+        const existingPermission = await permissionService.getPermissionByParams(permission);
+        if (!existingPermission) {
+            res.status(404).send({ message: 'Permission not found' });
+        } else {
+            res.status(200).send(existingPermission);
+        }
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -82,8 +113,7 @@ router.put('/:id', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(200).send({ message: 'Permission successfully updated', permission: response });
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -97,8 +127,7 @@ router.delete('/:id', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(200).send({ message: 'Permission successfully deleted', permission: response });
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });

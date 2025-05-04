@@ -108,7 +108,7 @@ const userPaths = {
                     }
                 }
             }
-        }
+        },        
     },
     "/api/user/{id}": {
         "get": {
@@ -261,6 +261,56 @@ const userPaths = {
                                         "$ref": "#/components/schemas/User"
                                     }
                                 }
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "User not found",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "User not found"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/api/user/name/": {
+        "get": {
+            "summary": "Get a user by username",
+            "tags": ["Users"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "username",
+                    "in": "query",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    },
+                    "description": "The username of the user to retrieve"
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Returns the user with the specified username",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/User"
                             }
                         }
                     }

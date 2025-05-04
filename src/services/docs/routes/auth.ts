@@ -18,7 +18,7 @@ const authPaths = {
                                 "password": {
                                     "type": "string",
                                     "description": "The password of the user",
-                                    "example": "admin"
+                                    "example": "Admin123!"
                                 }
                             }
                         }

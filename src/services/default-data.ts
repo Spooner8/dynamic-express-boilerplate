@@ -50,8 +50,38 @@ export const defaultData = {
         },
         {
             roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/user/name',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
             routePattern: '/api/roles',
             method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:name',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/id/:name',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:id/permissions',
+            method: Methods.POST,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:id/permissions/:permissionId',
+            method: Methods.DELETE,
         },
         {
             roleName: DefaultRoles.ADMIN,
@@ -76,6 +106,31 @@ export const defaultData = {
         {
             roleName: DefaultRoles.ADMIN,
             routePattern: '/api/permissions',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/role/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/params',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/method/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/role/:id',
             method: Methods.GET,
         },
         {
@@ -119,12 +174,12 @@ export const defaultData = {
         {
             roleName: DefaultRoles.ADMIN,
             email: 'admin@api.org',
-            password: 'admin',
+            password: 'Admin123!',
         },
         {
             roleName: DefaultRoles.USER,
             email: 'user@api.org',
-            password: 'user',
+            password: 'User123!',
         },
     ]
 }

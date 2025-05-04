@@ -314,7 +314,110 @@ const rolePaths = {
                 }
             }
         }
-    }
+    },
+    "/api/roles/{name}": {
+        "get": {
+            "summary": "Get a role by name",
+            "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "name",
+                    "description": "The name of the role to retrieve",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Returns the role with the specified name",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "$ref": "#/components/schemas/Role"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Returns a message",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Role not found"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "/api/roles/id/{name}": {
+        "get": {
+            "summary": "Get a role ID by name",
+            "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
+            "parameters": [
+                {
+                    "name": "name",
+                    "description": "The name of the role to retrieve the ID for",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "string"
+                    }
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Returns the ID of the role with the specified name",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RoleId"
+                            }
+                        }
+                    }
+                },
+                "404": {
+                    "description": "Returns a message",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Role not found"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
 };
 
 export default rolePaths;

@@ -6,6 +6,8 @@
  * - POST /create: Create a new role.
  * - GET /:id: Get a role by ID.
  * - GET /: Get all roles.
+ * - GET /name/:name: Get a role by name.
+ * - GET /id/:name: Get a role ID by name.
  * - PUT /:id: Update a role by ID.
  * - DELETE /:id: Delete a role by ID. (Soft delete)
  */
@@ -45,8 +47,7 @@ router.get('/', checkPermissions, async (_req: Request, res: Response) => {
         } else {
             res.status(200).send(roles);
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -60,8 +61,35 @@ router.get('/:id', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(200).send(role);
         }
+    } catch (error: unknown) {
+        handleError(error, res);
     }
-    catch (error: unknown) {
+});
+
+router.get('/:name', checkPermissions, async (req: Request, res: Response) => {
+    try {
+        const name = req.params.name;
+        const role = name && (await roleService.getRoleByName(name));
+        if (!role) {
+            res.status(404).send({ message: 'Role not found' });
+        } else {
+            res.status(200).send(role);
+        }
+    } catch (error: unknown) {
+        handleError(error, res);
+    }
+});
+
+router.get('/id/:name', checkPermissions, async (req: Request, res: Response) => {
+    try {
+        const name = req.params.name;
+        const roleId = name && (await roleService.getRoleIdByName(name));
+        if (!roleId) {
+            res.status(404).send({ message: 'Role not found' });
+        } else {
+            res.status(200).send(roleId);
+        }
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -80,8 +108,7 @@ router.put('/:id', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(200).send({ message: "Role successfully updated", role: response });
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });
@@ -95,8 +122,7 @@ router.delete('/:id', checkPermissions, async (req: Request, res: Response) => {
         } else {
             res.status(200).send({ message: "Role sucessfully deactivated", role: response });
         }
-    }
-    catch (error: unknown) {
+    } catch (error: unknown) {
         handleError(error, res);
     }
 });

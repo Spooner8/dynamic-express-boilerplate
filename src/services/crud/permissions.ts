@@ -14,6 +14,9 @@
 
 import db from '../database';
 import { Permission } from '../../../generated/prisma_client';
+import { Methods } from '../../../generated/prisma_client';
+import { validate } from 'uuid';
+import { handleError } from '../../middleware/errorhandler';
 
 /**
  * @description
@@ -23,11 +26,11 @@ import { Permission } from '../../../generated/prisma_client';
  * @returns The created permission.
  */
 async function createPermission(permission: Permission) {
-    const validRole = await db.role.findUnique({
-        where: { id: permission.roleId }
-    });
-    if (!validRole) {
-        throw new Error('Role does not exist');
+    try {
+        await validateNewPermission(permission);
+    } catch(error: unknown) {
+        handleError(error, null);
+        return null;
     }
 
     const permissionExists = await db.permission.findUnique({
@@ -63,6 +66,13 @@ async function getPermissionByRoleId(roleId: string) {
     });
 }
 
+/**
+ * @description
+ * Fetch a permission by its route pattern, method, and role ID from the database and return the permission object.
+ * 
+ * @param {Permission} permission - The permission object to fetch.
+ * @returns The permission object or null if not found.
+ */
 async function getPermissionByParams(permission: Permission) {
     return await db.permission.findUnique({
         where: {
@@ -129,6 +139,36 @@ async function deletePermission(id: string) {
     return await db.permission.delete({
         where: { id }
     });
+}
+
+/**
+ * @description
+ * Validate the new permission object before creating it.
+ * Sets the method to uppercase and checks if the method is valid.
+ * Checks if the route pattern is valid and if the role ID exists.
+ * 
+ * @param {Permission} permission - The permission object to validate.
+ * @throws {Error} If the permission object is invalid.
+ */
+async function validateNewPermission(permission: Permission) {
+    permission.method = permission.method.toUpperCase() as Methods;
+    const validMethods = Object.values(Methods);
+    if (!validMethods.includes(permission.method)) {
+        throw new Error('Invalid method');
+    }
+
+    const validRoutePattern = /^\/api\/(?!\/)([a-zA-Z0-9._-]+|:[a-zA-Z][a-zA-Z0-9_-]*\??)(\/([a-zA-Z0-9._-]+|:[a-zA-Z][a-zA-Z0-9_-]*\??))*$/;
+    if (!validRoutePattern.test(permission.routePattern)) {
+        throw new Error('Invalid route pattern');
+    }
+
+    const existingRole = await db.role.findUnique({
+        where: { id: permission.roleId }
+    });
+
+    if (!existingRole) {
+        throw new Error('Invalid role ID');
+    }
 }
 
 export const permissionService = {

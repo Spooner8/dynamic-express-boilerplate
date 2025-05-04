@@ -15,6 +15,7 @@
 import bcrypt from 'bcrypt';
 import db from '../database';
 import type { User } from '../../../generated/prisma_client';
+import { logger } from '../log/logger';
 
 /**
  * @description
@@ -26,6 +27,14 @@ import type { User } from '../../../generated/prisma_client';
  * @returns The created user.
 */
 async function createUser(email: string, password: string, roleId?: string) {
+    if (!validateUsername(email)) {
+        throw new Error('Username must be a valid email address');
+    }
+
+    if (!validatePassword(password)) {
+        throw new Error('Password doesen\'t reach the minimum security requirements (8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character)');
+    }
+
     const userExists = await db.user.findUnique({
         where: { email },
     });
@@ -75,6 +84,11 @@ async function getUserById(id: string) {
     );
 }
 
+/**
+ * 
+ * @param {string} username - The username (email) of the user to fetch.
+ * @returns The user object or null if not found.
+ */
 async function getUserByUsername(username: string) {
     return await db.user.findUnique({
         where: { email: username }
@@ -101,18 +115,23 @@ async function updateUser(id: string, updatedUser: User) {
         where: { email: updatedUser.email },
     });
     if (existingUser && existingUser.id !== id) {
-        throw new Error('Email already exists');
+        throw new Error('Username already in use');
     }
 
+    // If the user is not using Google authentication. Check if the password is empty and set it to the existing password, to avoid overwriting it with an empty string.
     if (!userExists.googleId && updatedUser.password && updatedUser.password === '') {
         updatedUser.password = userExists.password;
     }
 
+    // If the user is using Google authentication. Check if the googleId is empty and set it to the existing googleId, to avoid overwriting it with an empty string.
     if (userExists.googleId && updatedUser.googleId && userExists.googleId !== updatedUser.googleId) {
         updatedUser.googleId = userExists.googleId;
     }
 
     if (updatedUser.password) {
+        if (!validatePassword(updatedUser.password)) {
+            throw new Error('Password doesen\'t reach the minimum security requirements (8 characters, 1 uppercase letter, 1 lowercase letter, 1 number, 1 special character)');
+        }
         const user = await db.user.findUnique({ where: { id } });
         if (user && user.password !== updatedUser.password) {
             updatedUser.password = await bcrypt.hash(updatedUser.password, 10);
@@ -135,6 +154,37 @@ async function deleteUser(id: string) {
         where: { id },
         data: { isActive: false }
     });
+}
+
+
+/**
+ * @description
+ * Validate the username (email) format.
+ * 
+ * @param {string} username - The username to validate.
+ * @returns A boolean indicating whether the username is valid or not.
+ */
+function validateUsername(username: string) {
+    const re = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    return re.test(username);
+}
+
+/**
+ * @description
+ * Validate the password for a minimum of security requirements.
+ * The password must contain at least:
+ * - 8 characters
+ * - 1 uppercase letter
+ * - 1 lowercase letter
+ * - 1 number
+ * - 1 special character
+ * 
+ * @param {string} password - The password to validate.
+ * @returns A boolean indicating whether the password is valid or not.
+ */
+function validatePassword(password: string) {
+    const re = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d])[a-zA-Z\d\S]{8,}$/;
+    return re.test(password);
 }
 
 export const userService = {
