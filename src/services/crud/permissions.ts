@@ -31,7 +31,7 @@ async function createPermission(permission: Permission) {
     }
 
     const permissionExists = await db.permission.findUnique({
-        where: { routePattern_method_roleId: { routePattern: permission.routePattern, method: permission.method, roleId: permission.roleId } }
+        where: { unique_routePattern_method_roleId: { routePattern: permission.routePattern, method: permission.method, roleId: permission.roleId } }
     });
     if (permissionExists) {
         throw new Error('Permission already exists');
@@ -60,6 +60,18 @@ async function getPermissions() {
 async function getPermissionByRoleId(roleId: string) {
     return await db.permission.findMany({
         where: { roleId }
+    });
+}
+
+async function getPermissionByParams(permission: Permission) {
+    return await db.permission.findUnique({
+        where: {
+            unique_routePattern_method_roleId: {
+                routePattern: permission.routePattern,
+                method: permission.method,
+                roleId: permission.roleId
+            }
+        }
     });
 }
 
@@ -124,6 +136,7 @@ export const permissionService = {
     getPermissions,
     getPermissionByRoleId,
     getPermissionById,
+    getPermissionByParams,
     updatePermission,
     deletePermission
 };

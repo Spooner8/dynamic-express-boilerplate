@@ -19,7 +19,7 @@ import { checkPermissions } from '../middleware/protection';
 
 const router = Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', checkPermissions, async (req: Request, res: Response) => {
     try {
         const permission: Permission = req.body;
         if (!permission.routePattern || !permission.method || !permission.roleId) {
@@ -39,7 +39,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/', async (_req: Request, res: Response) => {
+router.get('/', checkPermissions, async (_req: Request, res: Response) => {
     try {
         const permissions = await permissionService.getPermissions();
         if (!permissions) {

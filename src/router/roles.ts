@@ -19,7 +19,7 @@ import { checkPermissions } from '../middleware/protection';
 
 const router = Router();
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', checkPermissions, async (req: Request, res: Response) => {
     try {
         const role: Role = req.body;
         if (!role.name) {
@@ -37,7 +37,7 @@ router.post('/', async (req: Request, res: Response) => {
     }
 });
 
-router.get('/', async (_req: Request, res: Response) => {
+router.get('/', checkPermissions, async (_req: Request, res: Response) => {
     try {
         const roles = await roleService.getRoles();
         if (!roles) {

@@ -59,6 +59,12 @@ async function getRoles() {
     return await db.role.findMany();
 }
 
+async function getRoleByName(name: string) {
+    return await db.role.findUnique({
+        where: { name }
+    });
+}
+
 /**
  * @description
  * Fetch a role by its ID from the database and return the role object.
@@ -80,7 +86,7 @@ async function getRoleById(id: string) {
  * 
  * @returns The id of the default role or null if not found.
  */
-async function getDefaultRole() {
+async function getDefaultRoleId() {
     const defaultRoleId = await db.role.findFirst({
         where: { isDefault: true },
     });
@@ -95,7 +101,7 @@ async function getDefaultRole() {
  * 
  * @returns The id of the admin role or null if not found.
  */
-async function getAdminRole() {
+async function getAdminRoleId() {
     const adminRoleId = await db.role.findFirst({
         where: { isAdmin: true },
     });
@@ -146,8 +152,9 @@ export const roleService = {
     createRole,
     getRoles,
     getRoleById,
-    getDefaultRole,
-    getAdminRole,
+    getRoleByName,
+    getDefaultRoleId,
+    getAdminRoleId,
     updateRole,
     deleteRole,
 };

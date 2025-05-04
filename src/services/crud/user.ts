@@ -25,7 +25,7 @@ import type { User } from '../../../generated/prisma_client';
  * 
  * @returns The created user.
 */
-async function createUser(email: string, password: string) {
+async function createUser(email: string, password: string, roleId?: string) {
     const userExists = await db.user.findUnique({
         where: { email },
     });
@@ -47,7 +47,7 @@ async function createUser(email: string, password: string) {
     const data = {
         email: email,
         password: await bcrypt.hash(password, salt),
-        roleId: defaultRole.id,
+        roleId: roleId || defaultRole.id,
     };
     
     return await db.user.create({ data });
