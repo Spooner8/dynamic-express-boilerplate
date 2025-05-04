@@ -6,7 +6,7 @@
 
 import express from 'express';
 import { initializeAPI } from './services/api';
-import { initializeDefautData } from './services/crud/startup';
+import { initializeDefautData } from './services/init-database';
 
 const SERVER_ROLE = process.env.SERVER_ROLE || 'all';
 const allowedRoles = ['all', 'api', 'worker'];

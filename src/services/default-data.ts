@@ -1,103 +1,130 @@
-import { isAdmin } from "../middleware/protection";
+import { Methods } from "../../generated/prisma_client"
+
+enum DefaultRoles {
+    ADMIN = 'Administrator',
+    USER = 'User',
+}
 
 export const defaultData = {
     roles: [
         {
-            name: 'Administrator',
+            name: DefaultRoles.ADMIN,
             description: 'Administrator role with all permissions',
             isSystem: true,
             isAdmin: true,
         },
         {
-            name: 'User',
+            name: DefaultRoles.USER,
             description: 'Regular user role',
             isSystem: true,
             isAdmin: false,
             isDefault: true,
         }
     ],
-    permissions: {
-        adminPermissions: [
-            {
-                routePattern: '/api/user',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/user/:id',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/user',
-                method: 'POST',
-            },
-            {
-                routePattern: '/api/user/:id',
-                method: 'PUT',
-            },
-            {
-                routePattern: '/api/user/:id',
-                method: 'DELETE',
-            },
-            {
-                routePattern: '/api/roles',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/roles/:id',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/roles',
-                method: 'POST',
-            },
-            {
-                routePattern: '/api/roles/:id',
-                method: 'PUT',
-            },
-            {
-                routePattern: '/api/roles/:id',
-                method: 'DELETE',
-            },
-            {
-                routePattern: '/api/permissions',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/permissions/:id',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/permissions',
-                method: 'POST',
-            },
-            {
-                routePattern: '/api/permissions/:id',
-                method: 'PUT',
-            },
-            {
-                routePattern: '/api/permissions/:id',
-                method: 'DELETE',
-            }
-        ],
-        userPermissions: [
-            {
-                routePattern: '/api/user/:id',
-                method: 'GET',
-            },
-            {
-                routePattern: '/api/user/:id',
-                method: 'PUT',
-            },
-            {
-                routePattern: '/api/user/:id',
-                method: 'DELETE',
-            }
-        ],
-    },
+    permissions: [
+        // Admin permissions
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/user',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/user/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/user',
+            method: Methods.POST,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/user/:id',
+            method: Methods.PUT,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/user/:id',
+            method: Methods.DELETE,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles',
+            method: Methods.POST,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:id',
+            method: Methods.PUT,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/roles/:id',
+            method: Methods.DELETE,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions',
+            method: Methods.POST,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/:id',
+            method: Methods.PUT,
+        },
+        {
+            roleName: DefaultRoles.ADMIN,
+            routePattern: '/api/permissions/:id',
+            method: Methods.DELETE,
+        },
+        // User permissions
+        {
+            roleName: DefaultRoles.USER,
+            routePattern: '/api/user/:id',
+            method: Methods.GET,
+        },
+        {
+            roleName: DefaultRoles.USER,
+            routePattern: '/api/user/:id',
+            method: Methods.PUT,
+        },
+        {
+            roleName: DefaultRoles.USER,
+            routePattern: '/api/user/:id',
+            method: Methods.DELETE,
+        }
+    ],
     user: [
         {
+            roleName: DefaultRoles.ADMIN,
             email: 'admin@api.org',
             password: 'admin',
+        },
+        {
+            roleName: DefaultRoles.USER,
+            email: 'user@api.org',
+            password: 'user',
         },
     ]
 }

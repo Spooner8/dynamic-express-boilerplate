@@ -65,6 +65,13 @@ async function getRoleByName(name: string) {
     });
 }
 
+async function getRoleIdByName(name: string) {
+    const role = await db.role.findUnique({
+        where: { name }
+    });
+    return role?.id;
+}
+
 /**
  * @description
  * Fetch a role by its ID from the database and return the role object.
@@ -153,6 +160,7 @@ export const roleService = {
     getRoles,
     getRoleById,
     getRoleByName,
+    getRoleIdByName,
     getDefaultRoleId,
     getAdminRoleId,
     updateRole,

@@ -13,7 +13,7 @@ const authPaths = {
                                 "username": {
                                     "type": "string",
                                     "description": "The username of the user",
-                                    "example": "admin@api.or"
+                                    "example": "admin@api.org"
                                 },
                                 "password": {
                                     "type": "string",
