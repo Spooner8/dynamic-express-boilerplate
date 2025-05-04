@@ -3,6 +3,11 @@ const permissionPaths = {
         "post": {
             "summary": "Creates a new permission",
             "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "requestBody": {
                 "required": true,
                 "content": {
@@ -70,6 +75,11 @@ const permissionPaths = {
         "get": {
             "summary": "Get all permissions",
             "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "responses": {
                 "200": {
                     "description": "Successfully retrieved all permissions",
@@ -107,6 +117,11 @@ const permissionPaths = {
         "get": {
             "summary": "Get a permission by ID",
             "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
@@ -150,6 +165,11 @@ const permissionPaths = {
         "put": {
             "summary": "Update a permission",
             "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
@@ -212,6 +232,11 @@ const permissionPaths = {
         "delete": {
             "summary": "Delete a permission",
             "tags": ["Permissions"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",

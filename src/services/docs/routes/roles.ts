@@ -3,6 +3,11 @@ const rolePaths = {
         "post": {
             "summary": "Creates a new role",
             "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "requestBody": {
                 "required": true,
                 "content": {
@@ -71,6 +76,11 @@ const rolePaths = {
         "get": {
             "summary": "Get all roles",
             "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "responses": {
                 "200": {
                     "description": "Returns all roles as an array of Role objects",
@@ -108,6 +118,11 @@ const rolePaths = {
         "get": {
             "summary": "Get a role by ID",
             "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
@@ -158,6 +173,11 @@ const rolePaths = {
         "put": {
             "summary": "Update a role",
             "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
@@ -238,6 +258,11 @@ const rolePaths = {
         "delete": {
             "summary": "Delete a role (soft delete)",
             "tags": ["Roles"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",

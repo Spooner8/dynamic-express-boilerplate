@@ -18,8 +18,13 @@ const options = {
             {
                 url: 'http://localhost:3000/',
                 description: 'Development server',
-            }
+            },
+            {
+                url: 'http://localhost/',
+                description: 'Production server',
+            },
         ],
+
         paths: {
             ...rolePaths,
             ...authPaths,
@@ -28,6 +33,14 @@ const options = {
         },
         components: {
             ...components,
+            securitySchemes: {
+                cookieAuth: {
+                    type: 'apiKey',
+                    in: 'cookie',
+                    name: 'jwt',
+                    description: 'JWT token for authentication',
+                },
+            },
         },
         tags: [
             ...tags,

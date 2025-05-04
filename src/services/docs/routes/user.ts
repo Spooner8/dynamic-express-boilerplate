@@ -72,6 +72,11 @@ const userPaths = {
         "get": {
             "summary": "Get all users",
             "tags": ["Users"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "responses": {
                 "200": {
                     "description": "Returns all users",
@@ -109,6 +114,11 @@ const userPaths = {
         "get": {
             "summary": "Get a user by ID",
             "tags": ["Users"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
@@ -152,6 +162,11 @@ const userPaths = {
         "put": {
             "summary": "Update a user",
             "tags": ["Users"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
@@ -214,6 +229,11 @@ const userPaths = {
         "delete": {
             "summary": "Delete a user",
             "tags": ["Users"],
+            "security": [
+                {
+                    "cookieAuth": []
+                }
+            ],
             "parameters": [
                 {
                     "name": "id",
