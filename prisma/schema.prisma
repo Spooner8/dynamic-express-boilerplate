@@ -47,7 +47,7 @@ model Permission {
   createdAt    DateTime @default(now()) @db.Timestamptz(6)
   updatedAt    DateTime @updatedAt @db.Timestamptz(6)
 
-  @@unique([routePattern, method, roleId])
+  @@unique(name: "unique_routePattern_method_roleId", [routePattern, method, roleId])
   @@index([routePattern, roleId])
   @@map("permissions")
 }
