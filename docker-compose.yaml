@@ -52,11 +52,10 @@ services:
       timeout: 2s
       retries: 10
       
-  api-1:
+  api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: api-1
     image: dynamic-express-boilerplate
     env_file:
       - api.env
@@ -67,28 +66,16 @@ services:
         condition: service_started
     networks:
       - dynamic-express-boilerplate
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
     restart: always
 
-  api-2:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: api-2
-    image: dynamic-express-boilerplate
-    env_file:
-      - api.env
-    depends_on:
-      db:
-        condition: service_healthy
-      logger:
-        condition: service_started
-    networks:
-      - dynamic-express-boilerplate
-    restart: always
   
   logger:
     container_name: logger
-    image: express-logger
+    image: spoonersl/express-logger
     environment:
       - SERVER_ROLE=all
       - LOG_PORT=3001

@@ -30,32 +30,22 @@ services:
             timeout: 2s
             retries: 10
 
-    api-1:
+    api:
         build:
             context: .
             dockerfile: Dockerfile
-        container_name: api-1
         image: __PROJECT_NAME__
         env_file:
             - api.env
         depends_on:
-            - db
+            db:
+                condition: service_healthy
         networks:
             - __PROJECT_NAME__
-        restart: always
-
-    api-2:
-        build:
-            context: .
-            dockerfile: Dockerfile
-        container_name: api-2
-        image: __PROJECT_NAME__
-        env_file:
-            - api.env
-        depends_on:
-            - db
-        networks:
-            - __PROJECT_NAME__
+        deploy:
+            replicas: 1
+            restart_policy:
+                condition: on-failure
         restart: always
 
 volumes:
