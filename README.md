@@ -3,6 +3,10 @@
 ## 🌟 Overview
 This project is a boilerplate for building dynamic **Express.js** applications with **TypeScript**. It comes with a rich set of features, including authentication, database management, monitoring, and more. The project is modular and highly configurable, making it easy to adapt to your needs.
 
+By default the Database will initialize with several roles, permissions and users. You can just modify the default values in `src/services/default-data-ts` folder to geht what you need.
+
+All routes (with the exception of registration and login) are also protected by default. Provided that RBAC has been activated.
+
 ---
 
 ## ✨ Features
@@ -12,7 +16,9 @@ This project is a boilerplate for building dynamic **Express.js** applications w
 - **📊 Monitoring**: Prometheus metrics and Grafana dashboards.
 - **⚡ Rate Limiting**: Protect your API with express-rate-limit.
 - **📜 Logging**: Structured logging with Pino.
-- **🐳 Docker Support**: Pre-configured Docker and Docker Compose for deployment.
+- **📘 API Documentation**: Auto-generated API documentation with Swagger (via `swagger-ui-express`). Customizable and expandable at `src/docs`
+- **🐳 Docker Support**: Pre-configured Docker and Docker Compose for deployment. Dynamic scalable API.
+
 
 ---
 
@@ -55,6 +61,7 @@ npm install
 
 #### 2️⃣ Configure Environment Variables
 - Copy `.env.example` to `.env`:
+
   ```bash
   cp .env.example .env
   ```
@@ -84,11 +91,11 @@ If the following environment variables are not set, the application will use the
   ```bash
   npx prisma generate
   ```
-- Apply migrations:
+- Apply migrations (Database must be running):
   ```bash
   npx prisma migrate dev --name init
   ```
-- Open Prisma Studio to manage your database:
+- Open Prisma Studio to manage your database (Database must be running):
   ```bash
   npx prisma studio
   ```
@@ -127,6 +134,7 @@ To stop the running containers:
 ```bash
 docker-compose down
 ```
+Now you can reach your api via swagger on [Swagger](http://localhost/api/docs)
 
 ---
 
@@ -165,18 +173,18 @@ Grafana is used for visualizing metrics collected by Prometheus.
 The rate limiter is configured to allow 500 requests per 15 minutes by default. You can adjust this in `src/middleware/rate-limiter.ts`.
 
 ### Logger
-If LAAS (Logger as a service) is set to true, you have to run the service [express-logger](https://github.com/Spooner8/express-logger)
+If LAAS (Logger as a service) is set to true, you have to run the service [express-logger](https://github.com/Spooner8/express-logger). With the default settings you will get the latest pushed version on [express-logger](https://hub.docker.com/r/spoonersl/express-logger)
 
 ---
 
 ## 🛠️ Extensibility
-The API has been designed to allow easy integration of additional services, such as a cache database or other utilities. This is achieved through the use of server roles and an `if` block, which control the activation or deactivation of such services. To add new services, update the relevant configuration files and the code in `src/server.ts`.
+The API has been designed to allow easy integration of additional services, such as a cache database or other utilities. This is achieved through the use of server roles and an `if` block, which control the activation or deactivation of such services. To add new services, update the relevant configuration files and the code in `src/app.ts`.
 
 ---
 
 ## 🛠️ Customization
 - Modify `src/services/api.ts` to add or remove routes.
-- Update `prisma/schema.prisma` to change the database schema.
+- Update `prisma/schema.prisma` to change the database schema. Run `npx prisma generate` after modifications.
 - Use environment variables to enable or disable features as needed.
 
 ---
@@ -185,6 +193,10 @@ The API has been designed to allow easy integration of additional services, such
 - Ensure all environment variables are set correctly.
 - Use `docker-compose.yaml` for production deployment.
 - Monitor the application using Prometheus and Grafana.
+- Scale your api's flexible.
+```bash
+docker compose up -d --build --scale api=3 # For 3 instances of the api instead of 1
+```
 
 ---
 
