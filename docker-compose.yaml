@@ -61,8 +61,10 @@ services:
     env_file:
       - api.env
     depends_on:
-      - logger
-      - db
+      db:
+        condition: service_healthy
+      logger:
+        condition: service_started
     networks:
       - dynamic-express-boilerplate
     restart: always
@@ -76,8 +78,10 @@ services:
     env_file:
       - api.env
     depends_on:
-      - logger
-      - db
+      db:
+        condition: service_healthy
+      logger:
+        condition: service_started
     networks:
       - dynamic-express-boilerplate
     restart: always
