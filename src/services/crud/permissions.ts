@@ -15,7 +15,6 @@
 import db from '../database';
 import { Permission } from '../../../generated/prisma_client';
 import { Methods } from '../../../generated/prisma_client';
-import { validate } from 'uuid';
 import { handleError } from '../../middleware/errorhandler';
 
 /**
