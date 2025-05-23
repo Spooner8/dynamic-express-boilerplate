@@ -1,0 +1,3 @@
+networks:
+    __PROJECT_NAME__:
+        driver: bridge

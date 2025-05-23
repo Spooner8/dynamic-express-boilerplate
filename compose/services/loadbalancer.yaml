@@ -1,0 +1,11 @@
+services:
+    loadbalancer:
+        image: nginx:latest
+        container_name: loadbalancer
+        volumes:
+            - ./nginx.conf:/etc/nginx/nginx.conf:ro
+        ports:
+            - '80:80'
+        networks:
+            - __PROJECT_NAME__
+        restart: always
