@@ -1,0 +1,9 @@
+global:
+    scrape_interval: 15s
+
+scrape_configs:
+    - job_name: 'API'
+      dns_sd_configs:
+          - names: ['api']
+            type: 'A'
+            port: __PORT__

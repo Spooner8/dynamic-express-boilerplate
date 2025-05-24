@@ -1,0 +1,20 @@
+# __PROJECT_NAME__
+
+### First Steps
+
+To start the application as a Docker stack, you need to have Docker and Docker Compose installed on your machine. Once you have those set up, enter the following command in your terminal:
+
+```bash
+docker compose up -d --build
+```
+
+This command will build the Docker images and start the containers in detached mode. You can then access the application at `http://localhost`.
+
+To checkout the Swagger documentation, navigate to `http://localhost/api/docs` in your web browser.
+
+### Scaleing
+You are able to scale the api service by running the following command:
+
+```bash
+docker compose up -d --scale api=3
+```
