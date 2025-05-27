@@ -29,54 +29,73 @@ async function createDefaultRoles(roles: Role[]) {
         if (!existingRole) {
             const createdRole = await roleService.createRole(role as Role);
             if (!createdRole) {
+                console.error(`Error creating role ${role.name}`);
             }
-        } else {
         }
     }
 }
 
-async function createdefaultPermissions(permissions: { roleName: string; routePattern: string; method: Methods }[]) {
+async function createdefaultPermissions(
+    permissions: { roleName: string; routePattern: string; method: Methods }[]
+) {
     console.info('Creating default permissions...');
     const adminRoleId = await roleService.getAdminRoleId();
     const defaultRoleId = await roleService.getDefaultRoleId();
-    
+
     if (!adminRoleId || !defaultRoleId) {
-        console.error('Admin or default role not found. Skipping permission creation.');
+        console.error(
+            'Admin or default role not found. Skipping permission creation.'
+        );
         return;
     }
 
     for (const permission of permissions) {
         const roleId = await roleService.getRoleIdByName(permission.roleName);
         if (!roleId) {
-            console.error(`Role ${permission.roleName} not found. Skipping permission creation.`);
+            console.error(
+                `Role ${permission.roleName} not found. Skipping permission creation.`
+            );
             continue;
         }
 
-        const permissionWithRoleId = { 
+        const permissionWithRoleId = {
             routePattern: permission.routePattern,
             method: permission.method,
             roleId: roleId,
         };
-        const existingPermission = await permissionService.getPermissionByParams(permissionWithRoleId as Permission);
+        const existingPermission =
+            await permissionService.getPermissionByParams(
+                permissionWithRoleId as Permission
+            );
         if (!existingPermission) {
-            const createdPermission = await permissionService.createPermission(permissionWithRoleId as Permission);
+            const createdPermission = await permissionService.createPermission(
+                permissionWithRoleId as Permission
+            );
             if (!createdPermission) {
-                console.error(`Error creating permission ${permission.routePattern} for role ${permission.roleName}`);
+                console.error(
+                    `Error creating permission ${permission.routePattern} for role ${permission.roleName}`
+                );
             }
         } else {
-            console.info(`Permission ${permission.routePattern} for role ${permission.roleName} already exists. Skipping creation.`);
+            console.info(
+                `Permission ${permission.routePattern} for role ${permission.roleName} already exists. Skipping creation.`
+            );
         }
     }
 }
 
-async function createDefaultUser(users: { email: string; password: string; roleName: string }[]) {
+async function createDefaultUser(
+    users: { email: string; password: string; roleName: string }[]
+) {
     console.info('Creating default users...');
     for (const user of users) {
         const existingUser = await userService.getUserByUsername(user.email);
         if (!existingUser) {
             const roleId = await roleService.getRoleIdByName(user.roleName);
             if (!roleId) {
-                console.error(`Role ${user.roleName} not found. Skipping user creation.`);
+                console.error(
+                    `Role ${user.roleName} not found. Skipping user creation.`
+                );
                 continue;
             }
 
@@ -84,13 +103,19 @@ async function createDefaultUser(users: { email: string; password: string; roleN
                 email: user.email,
                 password: user.password,
                 roleId: roleId,
-            }
-            const createdUser = await userService.createUser(userWithRoleId.email, userWithRoleId.password, userWithRoleId.roleId);
+            };
+            const createdUser = await userService.createUser(
+                userWithRoleId.email,
+                userWithRoleId.password,
+                userWithRoleId.roleId
+            );
             if (!createdUser) {
                 console.error(`Error creating user ${user.email}`);
             }
         } else {
-            console.info(`User ${user.email} already exists. Skipping creation.`);
+            console.info(
+                `User ${user.email} already exists. Skipping creation.`
+            );
         }
     }
 }

@@ -15,7 +15,6 @@
 import bcrypt from 'bcrypt';
 import db from '../database';
 import type { User } from '../../../generated/prisma_client';
-import { logger } from '../log/logger';
 
 /**
  * @description
@@ -165,7 +164,7 @@ async function deleteUser(id: string) {
  * @returns A boolean indicating whether the username is valid or not.
  */
 function validateUsername(username: string) {
-    const re = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+    const re = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/g;
     return re.test(username);
 }
 
