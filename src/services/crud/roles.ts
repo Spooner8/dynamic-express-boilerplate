@@ -6,6 +6,7 @@
  * It handles the following operations:  
  * - Create a new role
  * - Get all roles
+ * - Get all roles for a permission
  * - Get a role by ID
  * - Get a role by name
  * - Get a role ID by name
@@ -59,6 +60,26 @@ async function createRole(role: Role) {
 */
 async function getRoles() {
     return await db.role.findMany();
+}
+
+/**
+ * @description
+ * Get all roles for a permission in the database.
+ * 
+ * @returns The array of role objects for the given permission ID.
+*/
+async function getRolesByPermissionId(permissionId: string) {
+    return await db.role.findMany({
+        where: {
+            permissions: {
+                some: {
+                    permission: {
+                        id: permissionId
+                    }
+                }
+            }
+        }
+    });
 }
 
 /**
@@ -177,6 +198,7 @@ async function deleteRole(id: string) {
 export const roleService = {
     createRole,
     getRoles,
+    getRolesByPermissionId,
     getRoleById,
     getRoleByName,
     getRoleIdByName,

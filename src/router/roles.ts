@@ -8,6 +8,7 @@
  * - GET /: Get all roles.
  * - GET /name/:name: Get a role by name.
  * - GET /id/:name: Get a role ID by name.
+ * - GET /permission/:id: Get all roles for a permission by permission ID.
  * - PUT /:id: Update a role by ID.
  * - DELETE /:id: Delete a role by ID. (Soft delete)
  */
@@ -44,6 +45,20 @@ router.get('/', checkPermissions, async (_req: Request, res: Response) => {
         const roles = await roleService.getRoles();
         if (!roles) {
             res.status(404).send({ message: 'Roles not found' });
+        } else {
+            res.status(200).send(roles);
+        }
+    } catch (error: unknown) {
+        handleError(error, res);
+    }
+});
+
+router.get('/permission/:id', checkPermissions, async (req: Request, res: Response) => {
+    try {
+        const permissionId = req.params.id;
+        const roles = permissionId && (await roleService.getRolesByPermissionId(permissionId));
+        if (!roles) {
+            res.status(404).send({ message: 'Permission has no roles assigned!' });
         } else {
             res.status(200).send(roles);
         }

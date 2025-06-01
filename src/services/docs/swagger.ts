@@ -42,14 +42,10 @@ const options = {
                 },
             },
         },
-        tags: [
-            ...tags,
-        ],
+        tags: [...tags],
     },
-    apis: [
-        './src/services/docs/*.ts',
-    ],
-}
+    apis: ['./src/services/docs/*.ts'],
+};
 
 const swaggerSpec = swaggerJSDoc(options);
 

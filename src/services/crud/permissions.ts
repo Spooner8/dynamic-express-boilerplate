@@ -5,11 +5,14 @@
  * 
  * It handles the following operations:  
  * - Create a new permission
+ * - Add a role to a permission
  * - Get all permissions
+ * - Get all permissions for a role
  * - Get a permission by ID
  * - Get permissions by role ID
  * - Update a permission
  * - Delete a permission (Hard delete)
+ * - Remove a role from a permission
  */
 
 import db from '../database';
@@ -33,13 +36,55 @@ async function createPermission(permission: Permission) {
     }
 
     const permissionExists = await db.permission.findUnique({
-        where: { unique_routePattern_method_roleId: { routePattern: permission.routePattern, method: permission.method, roleId: permission.roleId } }
+        where: { unique_routePattern_method: { routePattern: permission.routePattern, method: permission.method } }
     });
     if (permissionExists) {
         throw new Error('Permission already exists');
     }
 
     return await db.permission.create({ data: permission });
+}
+
+/**
+ * @description
+ * Add a new role for a permission in the database.
+ * 
+ * @returns The the created role on permission.
+*/
+async function addRoleOnPermission(permissionId: string, roleId: string) {
+    const permissionExists = await db.permission.findUnique({
+        where: { id: permissionId }
+    });
+    if (!permissionExists) {
+        return null;
+    }
+
+    const roleExists = await db.role.findUnique({
+        where: { id: roleId }
+    });
+    if (!roleExists) {
+        return null;
+    }
+
+    const existingRoleOnPermission = await db.rolesOnPermission.findUnique({
+        where: {
+            unique_roleId_permissionId: {
+                roleId,
+                permissionId
+            }
+        }
+    });
+
+    if (existingRoleOnPermission) {
+        throw new Error('Permission already has this role assigned');
+    }
+
+    return await db.rolesOnPermission.create({
+        data: {
+            roleId,
+            permissionId
+        }
+    });
 }
 
 /**
@@ -59,10 +104,22 @@ async function getPermissions() {
  * @param {string} roleId - The ID of the role to fetch permissions for.
  * @returns The array of permission objects for the given role ID.
  */
-async function getPermissionByRoleId(roleId: string) {
-    return await db.permission.findMany({
-        where: { roleId }
+async function getPermissionsByRoleId(roleId: string) {
+    const permissions = await db.permission.findMany({
+        where: {
+            roles: {
+                some: {
+                    role: {
+                        id: roleId
+                    }
+                }
+            }
+        }
     });
+
+    console.log(`Permissions for role ID ${roleId}:`, permissions);
+
+    return permissions
 }
 
 /**
@@ -75,10 +132,9 @@ async function getPermissionByRoleId(roleId: string) {
 async function getPermissionByParams(permission: Permission) {
     return await db.permission.findUnique({
         where: {
-            unique_routePattern_method_roleId: {
+            unique_routePattern_method: {
                 routePattern: permission.routePattern,
-                method: permission.method,
-                roleId: permission.roleId
+                method: permission.method
             }
         }
     });
@@ -160,22 +216,46 @@ async function validateNewPermission(permission: Permission) {
     if (!validRoutePattern.test(permission.routePattern)) {
         throw new Error('Invalid route pattern');
     }
+}
 
-    const existingRole = await db.role.findUnique({
-        where: { id: permission.roleId }
+/**
+ * @description
+ * Remove a role from a permission in the database.
+ * 
+ * @returns The deleted role on permission.
+*/
+async function removeRoleFromPermission(permissionId: string, roleId: string) {
+    const existingRoleOnPermission = await db.rolesOnPermission.findUnique({
+        where: {
+            unique_roleId_permissionId: {
+                roleId,
+                permissionId
+            }
+        }
     });
 
-    if (!existingRole) {
-        throw new Error('Invalid role ID');
+    if (!existingRoleOnPermission) {
+        return null;
     }
+
+    return await db.rolesOnPermission.delete({
+        where: {
+            unique_roleId_permissionId: {
+                roleId,
+                permissionId
+            }
+        }
+    });
 }
 
 export const permissionService = {
     createPermission,
+    addRoleOnPermission,
     getPermissions,
-    getPermissionByRoleId,
+    getPermissionsByRoleId,
     getPermissionById,
     getPermissionByParams,
     updatePermission,
-    deletePermission
+    deletePermission,
+    removeRoleFromPermission
 };

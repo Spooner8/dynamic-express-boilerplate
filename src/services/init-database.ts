@@ -36,49 +36,50 @@ async function createDefaultRoles(roles: Role[]) {
 }
 
 async function createdefaultPermissions(
-    permissions: { roleName: string; routePattern: string; method: Methods }[]
+    permissions: { roleNames: string[]; routePattern: string; method: Methods }[]
 ) {
     console.info('Creating default permissions...');
-    const adminRoleId = await roleService.getAdminRoleId();
-    const defaultRoleId = await roleService.getDefaultRoleId();
-
-    if (!adminRoleId || !defaultRoleId) {
-        console.error(
-            'Admin or default role not found. Skipping permission creation.'
-        );
-        return;
-    }
-
     for (const permission of permissions) {
-        const roleId = await roleService.getRoleIdByName(permission.roleName);
-        if (!roleId) {
-            console.error(
-                `Role ${permission.roleName} not found. Skipping permission creation.`
-            );
-            continue;
-        }
-
-        const permissionWithRoleId = {
+        const data = {
             routePattern: permission.routePattern,
             method: permission.method,
-            roleId: roleId,
-        };
-        const existingPermission =
-            await permissionService.getPermissionByParams(
-                permissionWithRoleId as Permission
-            );
+        }
+        const existingPermission = await permissionService.getPermissionByParams(
+            data as Permission
+        );
+
         if (!existingPermission) {
-            const createdPermission = await permissionService.createPermission(
-                permissionWithRoleId as Permission
+            const newPermission = await permissionService.createPermission(
+                data as Permission
             );
-            if (!createdPermission) {
+
+            if (!newPermission) {
                 console.error(
-                    `Error creating permission ${permission.routePattern} for role ${permission.roleName}`
-                );
+                    `Error creating permission for ${permission.routePattern} with method ${permission.method}`
+                )
+                continue;
             }
-        } else {
+
+            for (const roleName of permission.roleNames) {
+                const roleId = await roleService.getRoleIdByName(roleName);
+                if (!roleId) {
+                    console.error(`Role ${roleName} not found. Skipping.`);
+                    continue;
+                }
+                const roleOnPermission = await permissionService.addRoleOnPermission(
+                    newPermission.id,
+                    roleId
+                );
+                if (!roleOnPermission) {
+                    console.error(
+                        `Error adding role ${roleName} to permission ${newPermission.id}`
+                    );
+                }
+            }
+        }
+        else {
             console.info(
-                `Permission ${permission.routePattern} for role ${permission.roleName} already exists. Skipping creation.`
+                `Permission for ${permission.routePattern} with method ${permission.method} already exists. Skipping creation.`
             );
         }
     }

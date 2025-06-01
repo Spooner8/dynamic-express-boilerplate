@@ -23,33 +23,45 @@ enum Methods {
 }
 
 model Role {
-  id          String       @id @default(ulid())
-  name        String       @unique
-  createdAt   DateTime     @default(now()) @db.Timestamptz(6)
-  updatedAt   DateTime     @updatedAt @db.Timestamptz(6)
+  id          String              @id @default(ulid())
+  name        String              @unique
+  createdAt   DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt   DateTime            @updatedAt @db.Timestamptz(6)
   description String?
-  isSystem    Boolean      @default(false)
-  isAdmin     Boolean      @default(false)
-  isDefault   Boolean      @default(false)
-  isActive    Boolean      @default(true)
+  isSystem    Boolean             @default(false)
+  isAdmin     Boolean             @default(false)
+  isDefault   Boolean             @default(false)
+  isActive    Boolean             @default(true)
   users       User[]
-  permissions Permission[]
+  permissions RolesOnPermission[]
 
   @@map("roles")
 }
 
 model Permission {
-  id           String   @id @default(ulid())
+  id           String              @id @default(ulid())
   routePattern String
   method       Methods
-  role         Role     @relation(fields: [roleId], references: [id])
-  roleId       String   @map("role_id")
-  createdAt    DateTime @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime @updatedAt @db.Timestamptz(6)
+  roles        RolesOnPermission[]
+  createdAt    DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime            @updatedAt @db.Timestamptz(6)
 
-  @@unique(name: "unique_routePattern_method_roleId", [routePattern, method, roleId])
-  @@index([routePattern, roleId])
+  @@unique(name: "unique_routePattern_method", [routePattern, method])
+  @@index([routePattern, method])
   @@map("permissions")
+}
+
+model RolesOnPermission {
+  id           String     @id @default(ulid())
+  role         Role       @relation(fields: [roleId], references: [id])
+  roleId       String     @map("role_id")
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  permissionId String     @map("permission_id")
+  createdAt    DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(6)
+
+  @@unique(name: "unique_roleId_permissionId", [roleId, permissionId])
+  @@map("roles_on_permissions")
 }
 
 model User {

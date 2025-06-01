@@ -15,6 +15,6 @@ const tags = [
         name: 'Permissions',
         description: 'The permissions managing API',
     },
-]
+];
 
 export default tags;

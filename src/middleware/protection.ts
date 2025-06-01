@@ -55,11 +55,12 @@ export const checkPermissions = (req: Request, res: Response, next: NextFunction
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            const permissions = await permissionService.getPermissionByRoleId(user.roleId);
+            const permissions = await permissionService.getPermissionsByRoleId(user.roleId);
 
             const hasPermission = permissions.some(permission => {
-                const matchPath = match(permission.routePattern, { decode: decodeURIComponent });
-                return permission.method === method && matchPath(url);
+                const matchUrl = match(permission.routePattern, { decode: decodeURIComponent });
+                const matched = matchUrl(url);
+                return matched && permission.method === method;
             });
 
             if (!hasPermission) {
