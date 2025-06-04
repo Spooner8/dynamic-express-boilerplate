@@ -23,15 +23,18 @@ const LIMITER = (process.env.RATE_LIMITER || 'true') === 'true';
 const COLLECT_METRICS = (process.env.COLLECT_METRICS || 'false') === 'true';
 const RBAC = (process.env.RBAC || 'false') === 'true';
 const USE_GOOGLE_AUTH = (process.env.USE_GOOGLE_AUTH || 'false') === 'true';
+const allowedOrigins =
+    process.env.ALLOWED_ORIGINS?.split(',').map((origin) => origin.trim()) ||
+    [];
 
 /**
  * @description
  * Initialize the API server
- * 
+ *
  * @param {Express} app - Express app
  */
 export const initializeAPI = (app: Express) => {
-    const allowedOrigins = ['http://localhost:80', 'http://localhost:3000'];
+    console.log('Allowed Origins :', allowedOrigins);
 
     const corsOptions = {
         origin: allowedOrigins,
@@ -47,7 +50,7 @@ export const initializeAPI = (app: Express) => {
     app.use(cookieParser());
     app.use(cors(corsOptions));
     app.use(passport.initialize());
-    
+
     if (LIMITER) {
         app.use(limiter);
     }
@@ -60,8 +63,8 @@ export const initializeAPI = (app: Express) => {
         app.use('/api/roles', rolesRouter);
         app.use('/api/permissions', permissionsRouter);
     }
-    
-    if(USE_GOOGLE_AUTH) {
+
+    if (USE_GOOGLE_AUTH) {
         app.use('/api/auth/google', authGoogleRouter);
     }
 
