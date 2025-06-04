@@ -23,7 +23,7 @@ const setTokenCookie = (name: string, token: string, res: Response) => {
   res.cookie(name, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     maxAge,
   });
 };
