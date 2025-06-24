@@ -17,6 +17,7 @@ All routes (with the exception of registration and login) are also protected by 
 - **⚡ Rate Limiting**: Protect your API with express-rate-limit.
 - **📜 Logging**: Structured logging with Pino.
 - **📘 API Documentation**: Auto-generated API documentation with Swagger (via `swagger-ui-express`). Customizable and expandable at `src/docs`
+- **📊 ERD Generator**: Generate the ERD just with the command `npx prisma generate` and view it in the `prisma/erd.md` file.
 - **🐳 Docker Support**: Pre-configured Docker and Docker Compose for deployment. Dynamic scalable API.
 
 
@@ -197,6 +198,11 @@ The API has been designed to allow easy integration of additional services, such
 ```bash
 docker compose up -d --build --scale api=3 # For 3 instances of the api instead of 1
 ```
+---
+
+## 📖 Dataschema
+
+![Entity Relationship Diagram](prisma/erd.svg)
 
 ---
 
