@@ -9,6 +9,15 @@ generator client {
   output   = "../generated/prisma_client"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+  output = "./erd.md"
+  disabled = false
+  ignoreEnums = false
+  tableOnly  = false
+  disableEmoji = false
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
@@ -24,9 +33,9 @@ enum Methods {
 
 model Role {
   id          String              @id @default(ulid())
-  name        String              @unique
   createdAt   DateTime            @default(now()) @db.Timestamptz(6)
   updatedAt   DateTime            @updatedAt @db.Timestamptz(6)
+  name        String              @unique
   description String?
   isSystem    Boolean             @default(false)
   isAdmin     Boolean             @default(false)
@@ -40,11 +49,11 @@ model Role {
 
 model Permission {
   id           String              @id @default(ulid())
+  createdAt    DateTime            @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime            @updatedAt @db.Timestamptz(6)
   routePattern String
   method       Methods
   roles        RolesOnPermission[]
-  createdAt    DateTime            @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime            @updatedAt @db.Timestamptz(6)
 
   @@unique(name: "unique_routePattern_method", [routePattern, method])
   @@index([routePattern, method])
@@ -53,12 +62,12 @@ model Permission {
 
 model RolesOnPermission {
   id           String     @id @default(ulid())
+  createdAt    DateTime   @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime   @updatedAt @db.Timestamptz(6)
   role         Role       @relation(fields: [roleId], references: [id])
   roleId       String     @map("role_id")
   permission   Permission @relation(fields: [permissionId], references: [id])
   permissionId String     @map("permission_id")
-  createdAt    DateTime   @default(now()) @db.Timestamptz(6)
-  updatedAt    DateTime   @updatedAt @db.Timestamptz(6)
 
   @@unique(name: "unique_roleId_permissionId", [roleId, permissionId])
   @@map("roles_on_permissions")
@@ -66,6 +75,8 @@ model RolesOnPermission {
 
 model User {
   id        String    @id @default(ulid())
+  createdAt DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   firstName String?
   lastName  String?
   email     String    @unique @map("username")
@@ -73,8 +84,6 @@ model User {
   role      Role      @relation(fields: [roleId], references: [id])
   roleId    String    @map("role_id")
   googleId  String?   @unique @map("google_id")
-  createdAt DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt DateTime  @updatedAt @db.Timestamptz(6)
   lastLogin DateTime? @db.Timestamptz(6)
   isActive  Boolean   @default(true)
 
@@ -84,12 +93,12 @@ model User {
 
 model RefreshToken {
   id        String   @id @default(ulid())
+  createdAt DateTime @default(now()) @db.Timestamptz(6)
+  expiresAt DateTime @db.Timestamptz(6)
   userId    String
   token     String
   userAgent String
   ipAddress String
-  createdAt DateTime @default(now()) @db.Timestamptz(6)
-  expiresAt DateTime @db.Timestamptz(6)
 
   @@index([userId])
   @@map("refresh_tokens")
