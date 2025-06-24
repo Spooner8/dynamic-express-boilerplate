@@ -18,6 +18,15 @@ generator erd {
   disableEmoji = false
 }
 
+generator erd_svg {
+  provider = "prisma-erd-generator"
+  output = "./erd.svg"
+  disabled = false
+  ignoreEnums = false
+  tableOnly  = false
+  disableEmoji = false
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
